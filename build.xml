@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="proai" default="dist" basedir=".">
+
   <loadproperties srcFile="build.properties"/>
+
   <path id="base.path">
     <pathelement location="${lib.bvalid}"/>
     <pathelement location="${lib.log4j}"/>
@@ -10,11 +12,13 @@
     <pathelement location="${lib.collections}"/>
     <pathelement location="${lib.pool}"/>
   </path>
+
   <path id="compile.path">
     <path refid="base.path"/>
     <pathelement location="${lib.servlet}"/>
     <pathelement location="${lib.junit}"/>
   </path>
+
   <path id="test.path">
     <path refid="compile.path"/>
     <pathelement location="${lib.mckoidb}"/>
@@ -23,6 +27,7 @@
     <pathelement location="${lib.gnuregexp}"/>
     <pathelement location="build/classes"/>
   </path>
+
   <target name="classes" 
           depends="prep"
           description="build all java classes into build/">
@@ -38,6 +43,7 @@
       <fileset dir="src/schemas"/>
     </copy>
   </target>
+
   <target name="dist" depends="classes" description="Build the distribution in dist/">
     <copy todir="build/webapp">
       <fileset dir="src/webapp"/>
@@ -56,10 +62,10 @@
     <jar jarfile="dist/proai.war" basedir="build/webapp"/>
     <jar jarfile="dist/proai.jar" basedir="build/webapp/WEB-INF/classes" includes="proai/** dbspec.xml schemas/**"/>
   </target>
+
   <target name="doc"
           depends="prep"
 		      description="Build the documentation in dist/doc">
-    <!--
     <javadoc packagenames="proai.*"
            classpathref="compile.path"
            sourcepath="src/java"
@@ -68,7 +74,6 @@
            windowtitle="Proai Javadocs">
       <doctitle><![CDATA[<h1>Proai Javadocs</h1>]]></doctitle>
     </javadoc>
-    -->
     <mkdir dir="dist/doc"/> 
     <copy todir="dist/doc">
       <fileset dir="src/doc"/>
@@ -77,6 +82,7 @@
       <arg path="src/config/proai.properties"/>
     </java>
   </target>
+
   <target name="test" description="Run tests" depends="clean,classes">
     <!-- 
       For this task to run, prior to running ant, set CLASSPATH=lib\junit.jar

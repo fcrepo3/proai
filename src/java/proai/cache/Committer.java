@@ -88,8 +88,8 @@ public class Committer extends Thread {
      * This method will block until adding the list would not cause the queue
      * to exceed its capacity or the thread is finished running.
      *
-     * @returns whether the handoff was successful.  The handoff will only
-     *          fail if the <code>Committer</code> thread has been stopped.
+     * @return whether the handoff was successful.  The handoff will only
+     *         fail if the <code>Committer</code> thread has been stopped.
      */
     protected synchronized boolean handoff(List queueItems) {
 
