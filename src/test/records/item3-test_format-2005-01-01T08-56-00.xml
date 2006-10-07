@@ -1,0 +1,16 @@
+<record xmlns="http://www.openarchives.org/OAI/2.0/">
+  <header>
+    <identifier>oai:example.org:item3</identifier>
+    <datestamp>2005-01-01T08:56:00Z</datestamp>
+    <setSpec>prime</setSpec>
+    <setSpec>abovetwo:odd</setSpec>
+  </header>
+  <metadata>
+    <test_format:doc xmlns:test_format="http://example.org/test_format/" 
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                     xsi:schemaLocation="http://example.org/test_format/
+                                         http://example.org/test_format.xsd">
+      <test_format:resource>urn:example:resource3</test_format:resource>
+    </test_format:doc>
+  </metadata>
+</record>

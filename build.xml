@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="proai" default="dist" basedir=".">
+  <loadproperties srcFile="build.properties"/>
+  <path id="base.path">
+    <pathelement location="${lib.bvalid}"/>
+    <pathelement location="${lib.log4j}"/>
+    <pathelement location="${lib.httpclient}"/>
+    <pathelement location="${lib.logging}"/>
+    <pathelement location="${lib.dbcp}"/>
+    <pathelement location="${lib.collections}"/>
+    <pathelement location="${lib.pool}"/>
+  </path>
+  <path id="compile.path">
+    <path refid="base.path"/>
+    <pathelement location="${lib.servlet}"/>
+    <pathelement location="${lib.junit}"/>
+  </path>
+  <path id="test.path">
+    <path refid="compile.path"/>
+    <pathelement location="${lib.mckoidb}"/>
+    <pathelement location="${lib.mckoijdbc}"/>
+    <pathelement location="${lib.mysqljdbc}"/>
+    <pathelement location="${lib.gnuregexp}"/>
+    <pathelement location="build/classes"/>
+  </path>
+  <target name="classes" 
+          depends="prep"
+          description="build all java classes into build/">
+    <mkdir dir="build/classes"/>
+    <javac srcdir="src/java" destdir="build/classes" 
+           includes="**" 
+           classpathref="compile.path"
+           optimize="${optimize}" debug="${debug}"/>
+    <copy todir="build/classes">
+      <fileset dir="src/config"/>
+    </copy>
+    <copy todir="build/classes/schemas">
+      <fileset dir="src/schemas"/>
+    </copy>
+  </target>
+  <target name="dist" depends="classes" description="Build the distribution in dist/">
+    <copy todir="build/webapp">
+      <fileset dir="src/webapp"/>
+    </copy>
+    <mkdir dir="build/webapp/WEB-INF/classes"/>
+    <copy todir="build/webapp/WEB-INF/classes">
+      <fileset dir="build/classes"/>
+    </copy>
+    <mkdir dir="build/webapp/WEB-INF/lib"/>
+    <copy todir="build/webapp/WEB-INF/lib">
+      <fileset dir="lib">
+        <exclude name="javax.servlet-2.3.jar"/>
+        <exclude name="junit.jar"/>
+      </fileset>
+    </copy>
+    <jar jarfile="dist/proai.war" basedir="build/webapp"/>
+    <jar jarfile="dist/proai.jar" basedir="build/webapp/WEB-INF/classes" includes="proai/** dbspec.xml schemas/**"/>
+  </target>
+  <target name="doc"
+          depends="prep"
+		      description="Build the documentation in dist/doc">
+    <!--
+    <javadoc packagenames="proai.*"
+           classpathref="compile.path"
+           sourcepath="src/java"
+           defaultexcludes="yes"
+           destdir="dist/doc/api"
+           windowtitle="Proai Javadocs">
+      <doctitle><![CDATA[<h1>Proai Javadocs</h1>]]></doctitle>
+    </javadoc>
+    -->
+    <mkdir dir="dist/doc"/> 
+    <copy todir="dist/doc">
+      <fileset dir="src/doc"/>
+    </copy>
+    <java classpath="${lib.propstodocs}" classname="PropsToDocs" output="dist/doc/configuration.html">
+      <arg path="src/config/proai.properties"/>
+    </java>
+  </target>
+  <target name="test" description="Run tests" depends="clean,classes">
+    <!-- 
+      For this task to run, prior to running ant, set CLASSPATH=lib\junit.jar
+    -->
+    <mkdir dir="build/test"/>
+    <mkdir dir="build/test/input"/>
+    <copy todir="build/test/input">
+      <fileset dir="src/test"/>
+    </copy> 
+<!--
+-->
+    <mkdir dir="build/test/mckoi"/>
+    <copy todir="build/test/mckoi" file="src/config/mckoi.conf"/>
+<!--    <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="yes" showoutput="true"> -->
+    <junit printsummary="yes" haltonfailure="yes" showoutput="true">
+<formatter type="plain" usefile="false"/> 
+<!--      
+-->
+      <classpath refid="test.path"/>
+      <sysproperty key="proai.useTransactions" value="true"/>
+      <sysproperty key="proai.cacheBaseDir" value="${basedir}/build/test/cache"/>
+      <sysproperty key="proai.sessionBaseDir" value="${basedir}/build/test/sessions"/>
+      <sysproperty key="proai.secondsBetweenRequests" value="5"/>
+      <sysproperty key="proai.incompleteRecordListSize" value="2"/>
+      <sysproperty key="proai.incompleteSetListSize" value="2"/>
+      <sysproperty key="proai.incompleteIdentifierListSize" value="2"/>
+      <sysproperty key="proai.driverClassName" 
+                   value="proai.driver.impl.OAIDriverImpl"/>
+      <sysproperty key="proai.driverPollSeconds" value="120"/>
+<!--
+      <sysproperty key="proai.db.url" value="jdbc:mysql://localhost/proai?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
+      <sysproperty key="proai.db.driverClassName" value="com.mysql.jdbc.Driver"/>
+-->
+      <sysproperty key="proai.db.url" value="jdbc:mckoi:local://${basedir}/build/test/mckoi/mckoi.conf?create_or_boot=true"/> 
+      <sysproperty key="proai.db.driverClassName" value="com.mckoi.JDBCDriver"/>
+<!-- 
+-->
+      <sysproperty key="proai.db.username" value="proai"/>
+      <sysproperty key="proai.db.password" value="proai"/>
+      <sysproperty key="com.mckoi.JDBCDriver.ddlConverter" value="proai.util.McKoiDDLConverter"/>
+      <sysproperty key="com.mysql.jdbc.Driver.ddlConverter" value="proai.util.MySQLDDLConverter"/>
+      <sysproperty key="proai.driver.simple.baseDir" value="${basedir}/build/test/input"/>
+
+      <sysproperty key="proai.driverPollingEnabled" value="true"/>
+      <sysproperty key="proai.maxWorkers" value="5"/>
+      <sysproperty key="proai.maxWorkBatchSize" value="10"/>
+      <sysproperty key="proai.maxFailedRetries" value="3"/>
+      <sysproperty key="proai.maxCommitQueueSize" value="120"/>
+      <sysproperty key="proai.maxRecordsPerTransaction" value="60"/>
+      <sysproperty key="proai.schemaDir" value="${basedir}/build/test/schemas"/>
+      <!--
+      <test name="proai.test.OAIDriverImplTest"/>
+      <test name="proai.test.RecordCacheTest"/> 
+      -->
+      <test name="proai.test.ResponderTest"/> 
+    </junit>
+  </target>
+  <target name="prep"
+          description="prepare for a build">
+    <mkdir dir="build"/>
+    <mkdir dir="dist"/>
+  </target>
+  <target name="clean"
+          description="remove all build-generated stuff">
+      <delete dir="build"/>
+      <delete dir="dist"/>
+  </target>
+</project>

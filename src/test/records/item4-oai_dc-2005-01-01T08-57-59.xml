@@ -1,0 +1,16 @@
+<record xmlns="http://www.openarchives.org/OAI/2.0/">
+  <header>
+    <identifier>oai:example.org:item4</identifier>
+    <datestamp>2005-01-01T08:57:59Z</datestamp>
+    <setSpec>abovetwo:even</setSpec>
+  </header>
+  <metadata>
+    <oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" 
+               xmlns:dc="http://purl.org/dc/elements/1.1/" 
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+               xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ 
+                                   http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+      <dc:identifier>urn:example:resource4</dc:identifier>
+    </oai_dc:dc>
+  </metadata>
+</record>

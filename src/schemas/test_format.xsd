@@ -1,0 +1,14 @@
+<schema targetNamespace="http://example.org/test_format/"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:test_format="http://example.org/test_format/"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified">
+
+  <element name="doc" type="test_format:docType"/>
+
+  <complexType name="docType">
+    <sequence>
+    <element name="resource" type="string" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+</schema>

@@ -1,0 +1,2 @@
+http://www.openarchives.org/OAI/2.0/oai_dc/
+http://www.openarchives.org/OAI/2.0/oai_dc.xsd
