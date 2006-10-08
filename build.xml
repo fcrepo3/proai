@@ -80,6 +80,7 @@
     </copy>
     <java classpath="${lib.propstodocs}" classname="PropsToDocs" output="dist/doc/configuration.html">
       <arg path="src/config/proai.properties"/>
+      <arg value="Proai"/>
     </java>
   </target>
 

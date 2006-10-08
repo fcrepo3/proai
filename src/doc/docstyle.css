@@ -6,17 +6,19 @@ body {
     background-color: #ffffff;
     margin: 20px;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 12pt;
+    font-size: 10pt;
     line-height: 15pt;
     color: #000000;
 }
 
 #header {
-    border-bottom: 1px solid;
+    border: 2px solid black;
     clear: both;
     margin-bottom: 10px;
     min-height: 70px;
     width: 100%;
+    background: #EEEEFF;
+    color: black;
 }
 
 #logo {
@@ -77,12 +79,12 @@ body {
 
 #footer {
     border-top: 1px solid;
-    margin-top: 20px;
+    margin-top: 36px;
     padding-top: 8px;
 }
 
 #footer #copyright, #lastModified {
-    color: #4C7C8E;
+    color: black;
 }
 
 #footer #copyright {
@@ -93,13 +95,18 @@ body {
     float: right;
 }
 
-/* FIXME: Make these sort of match the Category4 stuff,
-          but still be appropriate for documentation */
-
-h1, h2, h3 {
-    color: #4C7C8E;
-    margin-top: 4px;
+h1 {
+    color: darkblue;
+    margin-top: 36px;
     margin-bottom: 4px;
+    border-bottom: solid 3px #000000;
+}
+
+h2, h3 {
+    color: darkblue;
+    margin-top: 36px;
+    margin-bottom: 4px;
+    border-bottom: solid 1px #000000;
 }
 
 h4, h5 {
@@ -110,14 +117,11 @@ h4, h5 {
 }
 
 h1 {
-    font-size: 24pt;
-    line-height: 110%;
-    padding-top: 8px;
-    padding-bottom: 4px;
+    font-size: 18pt;
 }
 
 h2 {
-    font-size: 18pt;
+    font-size: 16pt;
 }
 
 h3 {
@@ -132,7 +136,7 @@ h5 {
     font-size: 12pt;
 }
 
-h2, h3, h4, h5 {
+h1, h2, h3, h4, h5 {
     padding-top: 4px;
     padding-bottom: 4px;
 }
@@ -144,13 +148,14 @@ p {
 }
 
 .code {
-    background: #ddddff;
+    background: #EEEEFF;
     border: thin solid #000000;
     font-family: Lucida Console, Courier New, Courier, monospace;
     margin: 5px 5px 5px 5px;
     min-width: 600px;
     padding: 5px;
     white-space: pre;
+    font-size: 10pt;
 }
 
 .reference {
