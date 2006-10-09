@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+    <title>Proai @proai.version@ Documentation</title>
+    <link rel="stylesheet" type="text/css" href="docstyle.css" />
+</head>
+
+<body>
+
+<div class="toc">
+    <h1>
+      Proai @proai.version@
+    </h1>
+    <div class="tocbox">
+      <ol>
+		<li> <a href="#intro">What is Proai?</a></li>
+		<li> <a href="#diff">How does it work?</a></li>
+		<li> <a href="#download">Getting Started</a></li>
+		<li> <a href="#config">Configuration</a></li>
+		<li> <a href="#impl">Implementation Guide</a></li>
+		<li> <a href="#issues">Known Issues / Bugs</a></li>
+		<li> <a href="#license">License Information</a></li>
+      </ol>
+    </div>
+</div>
+
+<div class="sec2">
+  <h2><a name="intro">1. What is Proai?</a></h2>
+  <p>
+    Proai is a repository-neutral, Java web application supporting the 
+    <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">Open 
+    Archives Initiative Protocol for Metadata Harvesting</a> (OAI-PMH) version
+    2.0.  By implementing the <a href="api/proai/driver/OAIDriver.html">OAIDriver</a>
+    interface, developers can provide a full-featured OAI-PMH access point to 
+    their existing repository software.
+  </p>
+  <p>
+    Proai offers the following features:
+    <ul>
+      <li> Record caching.  Proai maintains it's own up-to-date copy of all 
+           records from the source repository.
+           This design has the following benefits:
+        <ul>
+           <li> Performance. Delivery to harvesters is very fast and does not
+                put a load on the source repository.</li>
+           <li> Reliability. Temporary unavailability of the source repository
+                does not disrupt the OAI-PMH interface or put it out-of-synch.
+                </li>
+        </ul>
+      </li>
+      <li> Automatic record validation with schema caching.</li>
+      <li> Configurable OAI response sizes.</li>
+      <li> Support for date-selective harvesting with seconds granularity.</li>
+      <li> Support for flat or hierarchical sets.</li>
+      <li> Support for persistent deleted records.</li>
+    </ul>
+  </p>
+</div>
+
+<div class="sec2">
+  <h2><a name="diff">2. How does it work?</a></h2>
+  <p>
+    Magic.
+  </p>
+</div>
+
+<div class="sec2">
+  <h2><a name="download">3. Getting Started</a></h2>
+  <p>
+    <ul>
+      <li> <a href="http://www.sourceforge.net/projects/proai">Download the latest release</a> from SourceForge.</li>
+      <li> <a href="release-notes.txt">View the release notes</a>.</li>
+      <li> Try out the sample OAIDriver implementation with
+           the included test files.</li>
+    </ul>
+
+  </p>
+</div>
+
+<div class="sec2">
+  <h2><a name="config">4. Configuration</a></h2>
+  <p>
+    <ul>
+      <li> See the <a href="configuration.html">Configuration Reference</a>
+           and edit your <code>proai.properties</code> file accordingly.
+      </li>
+      <li> To configure logging, edit the included <code>log4j.xml</code>
+           file and make sure it's in your <code>CLASSPATH</code>. 
+           For some help with Log4J configuration, see the 
+           <a href="http://wiki.apache.org/logging-log4j/Log4jXmlFormat">Log4J 
+           XML Configuration Primer</a>.
+      </li>
+    </ul>
+  </p>
+</div>
+
+<div class="sec2">
+  <h2><a name="impl">5. Implementation Guide</a></h2>
+<p>
+  See the <a href="api/index.html">API Javadocs</a>.
+</p>
+</div>
+
+<div class="sec2">
+  <h2><a name="issues">6. Known Issues / Bugs</a></h2>
+  <p>
+    None.
+  </p>
+</div>
+
+<div class="sec2">
+  <h2><a name="license">7. License Information</a></h2>
+  <p>
+    Proai is distributed under the Educational Community License (ECL), v1.0.  
+  </p>
+  <p>
+    The distribution also includes several third-party, open-source libraries,
+    each with it's own license terms.
+  </p>
+  <p>
+    See the <a href="license/index.html">License Information Page</a> for 
+    specific terms of all relevant licenses.
+  </p>
+</div>
+
+<div id="footer">
+    <div id="copyright">
+      Copyright &#xA9; 2006, Cornell University
+    </div>
+
+    <div id="lastModified">
+      Last Modified <script type="text/javascript">
+      //<![CDATA[
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+      //]]>
+      </script>
+    </div>
+</div>
+</body>
+</html>
