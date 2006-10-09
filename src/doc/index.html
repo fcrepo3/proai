@@ -63,8 +63,50 @@
 <div class="sec2">
   <h2><a name="diff">2. How does it work?</a></h2>
   <p>
-    Magic.
+    Before attempting to use Proai for your own OAI-PMH needs, you
+    should have a basic understanding of how it works.
   </p>
+  <div class="subsect">
+    <h4>Overview</h4>
+    <p>
+      Proai is installed as a service that sits between a source
+      repository and OAI harvesters.  On the front end, it responds
+      to OAI requests by consulting its local XML Record Cache.
+      On the back end, it keeps this cache up-to-date by periodically
+      communicating with the source repository through a repository-specific
+      interface.
+    </p>
+    <p>
+      <img src="overview.png"/>
+    </p>
+  </div>
+  <div class="subsect">
+    <h4>Front End</h4>
+    <p>
+      When a harvester sends an OAI request, Proai interprets the
+      request and consults the record cache, which consists of a set
+      set of database tables and pre-constructed records on disk.
+    </p>
+    <p>
+      If a response exceeds a configured number of records, Proai
+      takes care of splitting it into multiple parts and generating a
+      <code>resumptionToken</code> for each part.  In OAI-PMH,
+      this is known as
+      <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html#FlowControl">Flow Control</a>.
+    </p>
+    <p>
+      The front end depends solely on the record cache.  It does not
+      directly access the source repository and therefore can do its job
+      even when the source repository is unavailable.
+    </p>
+  </div>
+  <div class="subsect">
+    <h4>Back End</h4>
+    <p>
+      The job of the back end is to keep the record cache up to date
+      (synchronized) with the metadata in the source repository.
+    </p>
+  </div>
 </div>
 
 <div class="sec2">
@@ -106,9 +148,9 @@
 
 <div class="sec2">
   <h2><a name="issues">6. Known Issues / Bugs</a></h2>
-  <p>
-    None.
-  </p>
+    <ul>
+      <li> Response compression (e.g. gzip) is not currently supported. </li>
+    </ul>
 </div>
 
 <div class="sec2">
