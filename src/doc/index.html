@@ -33,9 +33,8 @@
     Proai is a repository-neutral, Java web application supporting the 
     <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html">Open 
     Archives Initiative Protocol for Metadata Harvesting</a> (OAI-PMH) version
-    2.0.  By implementing the <a href="api/proai/driver/OAIDriver.html">OAIDriver</a>
-    interface, developers can provide a full-featured OAI-PMH access point to 
-    their existing repository software.
+    2.0.  By implementing a repository-specific driver, developers can provide 
+    a full-featured OAI-PMH access point to their existing software.
   </p>
   <p>
     Proai offers the following features:
@@ -84,8 +83,8 @@
     <h4>Front End</h4>
     <p>
       When a harvester sends an OAI request, Proai interprets the
-      request and consults the record cache, which consists of a set
-      set of database tables and pre-constructed records on disk.
+      request and consults the <i>record cache</i>, which consists
+      of database tables and XML record files on disk.
     </p>
     <p>
       If a response exceeds a configured number of records, Proai
@@ -103,8 +102,28 @@
   <div class="subsect">
     <h4>Back End</h4>
     <p>
-      The job of the back end is to keep the record cache up to date
-      (synchronized) with the metadata in the source repository.
+      The job of Proai's back-end is to keep the record cache up to date.
+      This is done through a process known as the <i>update cycle</i>.
+    </p>
+    <p>
+      During an update cycle, the <i>cache updater</i> communicates
+      with the source repository via the <a href="api/proai/driver/OAIDriver.html">OAIDriver interface</a>.
+      An update cycle progresses as follows:
+      <ol>
+        <li> First, the updater queries for the current list of all sets to
+      see if any have changed since the previous cycle.  If so, the database
+      is updated accordingly.</li>
+        <li> Next, it queries for the list of new/modified records and enqueues 
+      them for processing.  
+        <li> Finally, the updater processes the queue, 
+      committing each change to the record cache.  For each record, this
+      involves getting the XML from the remote location, validating it, 
+      and removing it from the queue.</li>
+      </ol>
+    </p>
+    <p>
+      For a more in-depth understanding of the update cycle,
+      see <a href="update-cycle.html">Understanding the Proai Update Cycle</a>.
     </p>
   </div>
 </div>
