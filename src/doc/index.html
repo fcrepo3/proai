@@ -121,10 +121,6 @@
       and removing it from the queue.</li>
       </ol>
     </p>
-    <p>
-      For a more in-depth understanding of the update cycle,
-      see <a href="update-cycle.html">Understanding the Proai Update Cycle</a>.
-    </p>
   </div>
 </div>
 
@@ -132,7 +128,8 @@
   <h2><a name="download">3. Getting Started</a></h2>
   <p>
     <ul>
-      <li> <a href="http://www.sourceforge.net/projects/proai">Download the latest release</a> from SourceForge.</li>
+      <li> <a href="http://www.sourceforge.net/projects/proai">Download
+           the latest release</a> from SourceForge.</li>
       <li> <a href="release-notes.txt">View the release notes</a>.</li>
       <li> Try out the sample OAIDriver implementation with
            the included test files.</li>
@@ -161,7 +158,13 @@
 <div class="sec2">
   <h2><a name="impl">5. Implementation Guide</a></h2>
 <p>
-  See the <a href="api/index.html">API Javadocs</a>.
+  Using Proai for your own repository software is a matter of creating
+  an 
+  <code>OAIDriver</code>
+    implementation.  See the included source code of <code>
+    <a href="api/proai/driver/impl/OAIDriverImpl.html">OAIDriverImpl</a>
+  </code>
+  for an example.
 </p>
 </div>
 
@@ -190,17 +193,6 @@
 <div id="footer">
     <div id="copyright">
       Copyright &#xA9; 2006, Cornell University
-    </div>
-
-    <div id="lastModified">
-      Last Modified <script type="text/javascript">
-      //<![CDATA[
-            var cvsDate = "$Date$";
-            var parts = cvsDate.split(" ");
-            var modifiedDate = parts[1];
-            document.write(modifiedDate);
-      //]]>
-      </script>
     </div>
 </div>
 </body>
