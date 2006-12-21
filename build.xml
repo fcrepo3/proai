@@ -25,6 +25,8 @@
     <pathelement location="${lib.mckoijdbc}"/>
     <pathelement location="${lib.mysqljdbc}"/>
     <pathelement location="${lib.gnuregexp}"/>
+    <pathelement location="${lib.mysql-jdbc}"/>
+    <pathelement location="${lib.postgres-jdbc}"/>
     <pathelement location="build/classes"/>
   </path>
 
@@ -116,15 +118,18 @@
 <!--
       <sysproperty key="proai.db.url" value="jdbc:mysql://localhost/proai?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
       <sysproperty key="proai.db.driverClassName" value="com.mysql.jdbc.Driver"/>
+
+      <sysproperty key="proai.db.url" value="jdbc:postgresql://localhost/proai"/> 
+      <sysproperty key="proai.db.driverClassName" value="org.postgresql.Driver"/>
 -->
       <sysproperty key="proai.db.url" value="jdbc:mckoi:local://${basedir}/build/test/mckoi/mckoi.conf?create_or_boot=true"/> 
       <sysproperty key="proai.db.driverClassName" value="com.mckoi.JDBCDriver"/>
-<!-- 
--->
+
       <sysproperty key="proai.db.username" value="proai"/>
       <sysproperty key="proai.db.password" value="proai"/>
       <sysproperty key="com.mckoi.JDBCDriver.ddlConverter" value="proai.util.McKoiDDLConverter"/>
       <sysproperty key="com.mysql.jdbc.Driver.ddlConverter" value="proai.util.MySQLDDLConverter"/>
+      <sysproperty key="org.postgresql.Driver.ddlConverter" value="proai.util.PostgresDDLConverter"/>
       <sysproperty key="proai.driver.simple.baseDir" value="${basedir}/build/test/input"/>
 
       <sysproperty key="proai.driverPollingEnabled" value="true"/>
