@@ -23,6 +23,8 @@
 
   <path id="test.path">
     <path refid="compile.path"/>
+    <pathelement location="${lib.codec}"/>
+    <pathelement location="${lib.httpclient}"/>
     <pathelement location="${lib.mckoidb}"/>
     <pathelement location="${lib.mckoijdbc}"/>
     <pathelement location="${lib.mysqljdbc}"/>
