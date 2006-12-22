@@ -10,8 +10,6 @@
   <path id="base.path">
     <pathelement location="${lib.bvalid}"/>
     <pathelement location="${lib.log4j}"/>
-    <pathelement location="${lib.httpclient}"/>
-    <pathelement location="${lib.logging}"/>
     <pathelement location="${lib.dbcp}"/>
     <pathelement location="${lib.collections}"/>
     <pathelement location="${lib.pool}"/>
@@ -41,6 +39,8 @@
     <javac srcdir="src/java" destdir="build/classes" 
            includes="**" 
            classpathref="compile.path"
+           source="${source}"
+           target="${target}"
            optimize="${optimize}" debug="${debug}"/>
     <copy todir="build/classes">
       <fileset dir="src/config"/>
