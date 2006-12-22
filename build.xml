@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="proai" default="dist" basedir=".">
 
+  <!-- defines build options and lib paths -->
   <loadproperties srcFile="build.properties"/>
+
+  <!-- defines proai.version -->
+  <loadproperties srcFile="src/java/proai/Proai.properties"/>
 
   <path id="base.path">
     <pathelement location="${lib.bvalid}"/>
@@ -44,6 +48,16 @@
     <copy todir="build/classes/schemas">
       <fileset dir="src/schemas"/>
     </copy>
+    <copy file="src/java/proai/Proai.properties"
+          tofile="build/classes/proai/Proai.properties"/>
+    <propertyfile file="build/version.properties">
+      <entry key="buildDate" type="date" value="now"/>
+    </propertyfile>
+    <replace file="build/classes/proai/Proai.properties"
+             value="value not found in version.properties"
+             propertyFile="build/version.properties">
+      <replacefilter token="@buildDate@" property="buildDate"/>
+    </replace>
   </target>
 
   <target name="dist" depends="classes" description="Build the distribution in dist/">
@@ -62,7 +76,7 @@
       </fileset>
     </copy>
     <jar jarfile="dist/proai.war" basedir="build/webapp"/>
-    <jar jarfile="dist/proai.jar" basedir="build/webapp/WEB-INF/classes" includes="proai/** dbspec.xml schemas/**"/>
+    <jar jarfile="dist/proai-${proai.version}.jar" basedir="build/webapp/WEB-INF/classes" includes="proai/** dbspec.xml schemas/**"/>
   </target>
 
   <target name="doc"
@@ -80,6 +94,9 @@
     <copy todir="dist/doc">
       <fileset dir="src/doc"/>
     </copy>
+    <replace file="dist/doc/index.html"
+             token="@proai.version@"
+             value="${proai.version}"/>
     <java classpath="${lib.propstodocs}" classname="PropsToDocs" output="dist/doc/configuration.html">
       <arg path="src/config/proai.properties"/>
       <arg value="Proai"/>
