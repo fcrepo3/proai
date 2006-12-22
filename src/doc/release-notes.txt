@@ -8,6 +8,17 @@ Version 1.0 - December 22nd, 2006
 
  o This is the first official release of Proai
 
+ o Proai now does (optional) schema validation from the source
+
+ o Proai now works with Postgres
+
+ o Library upgrades:
+   - Log4J 1.2.14
+   - Commons-httpclient 3.1-beta1
+   - Commons-codec (required by commons-httpclient)
+   - MySQL Connector 5.0.4 (for testing)
+   - BValid 0.8.1
+
  o This version is compiled for Java 1.4, and works with Java 1.5.
    Future versions will likely not be compatible with Java 1.4.
 
