@@ -25,6 +25,7 @@
     <path refid="compile.path"/>
     <pathelement location="${lib.codec}"/>
     <pathelement location="${lib.httpclient}"/>
+    <pathelement location="${lib.logging}"/>
     <pathelement location="${lib.mckoidb}"/>
     <pathelement location="${lib.mckoijdbc}"/>
     <pathelement location="${lib.mysqljdbc}"/>
@@ -164,6 +165,39 @@
       -->
       <test name="proai.test.ResponderTest"/> 
     </junit>
+  </target>
+
+  <target name="srcrelease" depends="clean">
+    <copy todir="dist/release/proai-${proai.version}-src">
+      <fileset dir=".">
+        <exclude name="dist/**"/>
+      </fileset>
+    </copy>
+    <replace file="dist/release/proai-${proai.version}-src/README.txt"
+             value="value not found in version.properties"
+             propertyFile="src/java/proai/Proai.properties">
+      <replacefilter token="@proai.version@" property="proai.version"/>
+    </replace>
+    <zip zipfile="dist/release/proai-${proai.version}-src.zip" basedir="dist/release" includes="proai-${proai.version}-src/**"/>
+    <delete dir="dist/release/proai-${proai.version}-src"/>
+  </target>
+
+  <target name="binrelease" depends="dist,doc">
+    <copy todir="dist/release/proai-${proai.version}">
+      <fileset dir="dist">
+        <exclude name="release/**"/>
+      </fileset>
+    </copy>
+    <zip zipfile="dist/release/proai-${proai.version}.zip" basedir="dist/release" includes="proai-${proai.version}/**"/>
+    <delete dir="dist/release/proai-${proai.version}"/>
+  </target>
+
+  <target name="release" depends="srcrelease,binrelease" description="Build the source and binary distributions in dist/release">
+    <checksum fileext=".md5">
+      <fileset dir="dist/release">
+        <include name="*.zip"/>
+      </fileset>
+    </checksum>
   </target>
   <target name="prep"
           description="prepare for a build">

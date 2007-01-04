@@ -1,10 +1,10 @@
 
                        Proai OAI Provider Library
-                             Version @proai.version@
+                              Version @proai.version@
 
-                           Source Distribution
+                          Source Distribution
 
-                  Copyright (c) 2006, Cornell University
+               Copyright (c) 2006-2007, Cornell University
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

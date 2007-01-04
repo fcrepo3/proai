@@ -3,8 +3,8 @@
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Version 1.0 - December 22nd, 2006
-==================================
+Version 1.0 - January 4th, 2007
+================================
 
  o This is the first official release of Proai
 
@@ -21,4 +21,3 @@ Version 1.0 - December 22nd, 2006
 
  o This version is compiled for Java 1.4, and works with Java 1.5.
    Future versions will likely not be compatible with Java 1.4.
-
