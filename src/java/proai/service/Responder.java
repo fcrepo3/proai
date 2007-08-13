@@ -248,6 +248,7 @@ public class Responder {
 
             Date fromDate = validDate(from);
             Date untilDate = validDate(until);
+            checkGranularity(from, until);
             checkFromUntil(fromDate, untilDate);
             checkMetadataPrefix(metadataPrefix);
             ListProvider provider = new RecordListProvider(m_cache,
@@ -456,6 +457,22 @@ public class Responder {
             return parser.parse(dateString);
         } catch (Exception e) {
             throw new BadArgumentException(ERR_DATE_FORMAT);
+        }
+    }
+
+    /**
+     * Checks that the granularity of the from and until arguments match.
+     */
+    private static void checkGranularity(String from, String until)
+            throws BadArgumentException {
+        if (from!= null && until!=null) {
+            if ( ( (from.endsWith("Z")) 
+                    && (!until.endsWith("Z")) )
+                    || ( (until.endsWith("Z"))
+                    && (!from.endsWith("Z")) ) ) {
+                throw new BadArgumentException("Date granularities of from and "
+                        + "until arguments do not match.");
+            }
         }
     }
 

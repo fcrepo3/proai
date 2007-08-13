@@ -1,0 +1,3 @@
+Juan Corrales - jcorracles@users.sourceforge.net
+    Submitted patch to pass OpenArchives registration validation.
+    Sourceforge bug #1773259

@@ -60,7 +60,7 @@ public class ProviderServlet extends HttpServlet {
         try {
             url = request.getRequestURL().toString();
             verb = request.getParameter("verb");
-            if (verb == null) throw new BadArgumentException("must specify a verb");
+            if (verb == null) throw new BadVerbException("request did not specify a verb");
             identifier = request.getParameter("identifier");
             from = request.getParameter("from");
             until = request.getParameter("until");
@@ -107,7 +107,7 @@ public class ProviderServlet extends HttpServlet {
                     if (argCount > 1) throw new BadArgumentException("one or zero arguments needed, got " + argCount);
                     data = m_responder.listSets(resumptionToken);
                 } else {
-                    throw new BadArgumentException("bad verb: " + verb);
+                    throw new BadVerbException("bad verb: " + verb);
                 }
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.setContentType("text/xml; charset=UTF-8");
