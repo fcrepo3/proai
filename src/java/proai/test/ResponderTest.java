@@ -60,6 +60,8 @@ public class ResponderTest extends TestCase {
         doGetGoodRecord("oai:example.org:item3", "oai_dc");
         doGetGoodRecord("oai:example.org:item3", "test_format");
         doGetGoodRecord("oai:example.org:item4", "oai_dc");
+        doGetGoodRecord("oai:example.org:item5", "oai_dc");
+        
     }
 
     private void doGetGoodRecord(String item, String prefix) throws Exception {

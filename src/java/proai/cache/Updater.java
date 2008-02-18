@@ -15,8 +15,10 @@ import proai.Record;
 import proai.SetInfo;
 import proai.driver.OAIDriver;
 import proai.driver.RemoteIterator;
+import proai.error.RepositoryException;
 import proai.error.ServerException;
 import proai.error.ImmediateShutdownException;
+import proai.util.SetSpec;
 import proai.util.StreamUtil;
 
 public class Updater extends Thread {
@@ -360,15 +362,31 @@ public class Updater extends Thread {
 
         // apply new / updated
         RemoteIterator riter = _driver.listSetInfo();
-        List newSpecs = new ArrayList();
+        Set newSpecs = new HashSet ();
+        Set missingSpecs = new HashSet ();
+        
         try {
             while (riter.hasNext()) {
 
                 checkImmediateShutdown();
                 SetInfo setInfo = (SetInfo) riter.next();
-                String setSpec = setInfo.getSetSpec();
-                _db.putSetInfo(conn, setSpec, _disk.write(setInfo));
-                newSpecs.add(setSpec);
+                String encounteredSetSpec = setInfo.getSetSpec();
+
+                /* 
+                 * If we encounter a setSpec that implies that it is
+                 * a subset, look for the parent.  If we haven't 
+                 * encountered its parent yet, remember its identity:
+                 * unless we encounter it in subsequent results, we'll
+                 * have to use a default placeholder for it later.
+                 */
+                if (SetSpec.hasParents(encounteredSetSpec) && 
+                		!newSpecs.contains(
+                				SetSpec.parentOf(encounteredSetSpec))) {
+                	missingSpecs.add(SetSpec.parentOf(encounteredSetSpec));
+                } 
+                _db.putSetInfo(
+                	conn, encounteredSetSpec, _disk.write(setInfo));
+                newSpecs.add(encounteredSetSpec);
             }
         } finally {
             try {
@@ -378,6 +396,26 @@ public class Updater extends Thread {
             }
         }
 
+        /* Add any sets that are IMPLIED to exist, but weren't defined */
+        for (Iterator i = missingSpecs.iterator(); i.hasNext();) {
+            String possiblyMissing = (String) i.next();
+            
+            if (!SetSpec.isValid(possiblyMissing)) {
+                throw new RepositoryException("SetSpec '" + possiblyMissing
+                                              + "' is malformed");
+            }
+            
+        	for (Iterator m = SetSpec.allSetsFor(possiblyMissing).iterator(); m.hasNext();) {
+        	    String spec = (String) m.next();
+        		if (!newSpecs.contains(spec)) {
+        			_db.putSetInfo(conn, spec, _disk.write(
+        					SetSpec.defaultInfoFor(spec)));
+        			newSpecs.add(spec);
+        			_LOG.warn("Adding missing set: " + spec);
+        		}
+        	}
+        }
+        
         // apply deleted
         Iterator iter = _db.getSetInfo(conn).iterator();
         while (iter.hasNext()) {
