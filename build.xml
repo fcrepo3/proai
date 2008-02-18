@@ -32,6 +32,7 @@
     <pathelement location="${lib.gnuregexp}"/>
     <pathelement location="${lib.mysql-jdbc}"/>
     <pathelement location="${lib.postgres-jdbc}"/>
+  	<pathelement location="${lib.xerces}"/>
     <pathelement location="build/classes"/>
   </path>
 
