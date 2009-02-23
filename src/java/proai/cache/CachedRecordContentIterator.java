@@ -3,15 +3,15 @@ package proai.cache;
 import proai.CloseableIterator;
 import proai.error.ServerException;
 
-public class CachedRecordContentIterator implements CloseableIterator {
+public class CachedRecordContentIterator implements CloseableIterator<CachedContent> {
 
-    private CloseableIterator m_arrays;
+    private CloseableIterator<String[]> m_arrays;
     private RCDisk m_rcDisk;
     private boolean m_identifiers;
 
     private boolean m_closed;
 
-    public CachedRecordContentIterator(CloseableIterator paths,
+    public CachedRecordContentIterator(CloseableIterator<String[]> paths,
                                        RCDisk rcDisk,
                                        boolean identifiers) {
         m_arrays = paths;
@@ -25,10 +25,10 @@ public class CachedRecordContentIterator implements CloseableIterator {
         return m_arrays.hasNext();
     }
 
-    public Object next() throws ServerException {
+    public CachedContent next() throws ServerException {
         if (!hasNext()) return null;
         try {
-            String[] array = (String[]) m_arrays.next();
+            String[] array = m_arrays.next();
             return m_rcDisk.getContent(array[0], array[1], m_identifiers);
         } catch (Exception e) {
             close();

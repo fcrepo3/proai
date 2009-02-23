@@ -1,7 +1,8 @@
 package proai.error;
 
 public class NoSetHierarchyException extends ProtocolException {
-
+	static final long serialVersionUID = 1;
+	
     public NoSetHierarchyException() {
         super("The repository does not support sets.");
     }

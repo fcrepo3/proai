@@ -13,7 +13,7 @@ public interface DDLConverter {
 
     public boolean supportsTableType();
 
-    public List getDDL(TableSpec tableSpec);
+    public List<String> getDDL(TableSpec tableSpec);
 
     public String getDropDDL(String command);
 

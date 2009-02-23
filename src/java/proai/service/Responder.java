@@ -251,7 +251,7 @@ public class Responder {
             checkGranularity(from, until);
             checkFromUntil(fromDate, untilDate);
             checkMetadataPrefix(metadataPrefix);
-            ListProvider provider = new RecordListProvider(m_cache,
+            ListProvider<CachedContent> provider = new RecordListProvider(m_cache,
                                                            incompleteListSize,
                                                            identifiersOnly,
                                                            fromDate,
@@ -388,7 +388,7 @@ public class Responder {
         }
         try {
             if (resumptionToken == null) {
-                ListProvider provider = new SetListProvider(m_cache, m_incompleteSetListSize);
+                ListProvider<SetInfo> provider = new SetListProvider(m_cache, m_incompleteSetListSize);
                 return m_sessionManager.list(provider);
             } else {
                 return m_sessionManager.getResponseData(resumptionToken);

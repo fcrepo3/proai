@@ -4,10 +4,12 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 
+import proai.MetadataFormat;
+import proai.Record;
+import proai.SetInfo;
 import proai.driver.OAIDriver;
 import proai.driver.RemoteIterator;
 import proai.error.RepositoryException;
-import proai.util.StreamUtil;
 
 /**
  * An simple OAIDriver for testing/demonstration purposes.
@@ -108,18 +110,20 @@ public class OAIDriverImpl implements OAIDriver {
         return new Date(latest);
     }
 
-    public RemoteIterator listMetadataFormats() {
-        return new RemoteIteratorImpl(getMetadataFormatCollection().iterator());
+    public RemoteIterator<MetadataFormat> listMetadataFormats() {
+        return new RemoteIteratorImpl<MetadataFormat>(
+        		getMetadataFormatCollection().iterator());
     }
 
-    public RemoteIterator listSetInfo() {
-        return new RemoteIteratorImpl(getSetInfoCollection().iterator());
+    public RemoteIterator<SetInfo> listSetInfo() {
+        return new RemoteIteratorImpl<SetInfo>(
+        		getSetInfoCollection().iterator());
     }
 
-    public RemoteIterator listRecords(Date from, 
+    public RemoteIterator<Record> listRecords(Date from, 
                                       Date until, 
                                       String mdPrefix) {
-        return new RemoteIteratorImpl(getRecordCollection(from,
+        return new RemoteIteratorImpl<Record>(getRecordCollection(from,
                                                           until,
                                                           mdPrefix).iterator());
     }
@@ -155,9 +159,9 @@ public class OAIDriverImpl implements OAIDriver {
         }
     }
 
-    private Collection getSetInfoCollection() {
+    private Collection<SetInfo> getSetInfoCollection() {
         try {
-            List list = new ArrayList();
+            List<SetInfo> list = new ArrayList<SetInfo>();
             String[] names = m_setsDir.list();
             for (int i = 0; i < names.length; i++) {
                 if (names[i].endsWith(".xml")) {
@@ -172,9 +176,9 @@ public class OAIDriverImpl implements OAIDriver {
         }
     }
 
-    private Collection getMetadataFormatCollection() {
+    private Collection<MetadataFormat> getMetadataFormatCollection() {
         try {
-            List list = new ArrayList();
+            List<MetadataFormat> list = new ArrayList<MetadataFormat>();
             String[] names = m_formatsDir.list();
             for (int i = 0; i < names.length; i++) {
                 if (names[i].endsWith(".txt")) {
@@ -203,12 +207,11 @@ public class OAIDriverImpl implements OAIDriver {
         }
     }
 
-    private Collection getRecordCollection(Date from, 
+    private Collection<Record> getRecordCollection(Date from, 
                                            Date until, 
                                            String mdPrefix) {
-        List list = new ArrayList();
+        List<Record> list = new ArrayList<Record>();
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss");
-        long latest = 0;
         String[] names = m_recordsDir.list();
         for (int i = 0; i < names.length; i++) {
             String[] temp = names[i].replaceFirst("-", " ")

@@ -12,12 +12,12 @@ import org.apache.log4j.Logger;
 
 import proai.CloseableIterator;
 import proai.MetadataFormat;
+import proai.SetInfo;
 import proai.driver.impl.RemoteIteratorImpl;
 import proai.driver.impl.SetInfoImpl;
 import proai.error.ServerException;
 import proai.util.DBUtil;
 import proai.util.DDLConverter;
-import proai.util.StreamUtil;
 import proai.util.TableSpec;
 
 /**
@@ -278,12 +278,13 @@ public class RCDatabase {
         }
     }
 
-    public List getFormats(Connection conn) throws ServerException {
+    public List<CachedMetadataFormat> getFormats(Connection conn) throws ServerException {
         return getFormats(conn, null);
     }
 
-    public List getFormats(Connection conn, String identifier) throws ServerException {
-        List list = new ArrayList();
+    public List<CachedMetadataFormat> getFormats(Connection conn, String identifier) 
+    		throws ServerException {
+        List<CachedMetadataFormat> list = new ArrayList<CachedMetadataFormat>();
         Statement stmt = null;
         ResultSet rs = null;
         try {
@@ -316,10 +317,10 @@ public class RCDatabase {
      * Get a map of prefix (String) to formatKey (Integer) for all formats 
      * in the database.
      */
-    public Map getFormatKeyMap(Connection conn) throws ServerException {
+    public Map<String, Integer> getFormatKeyMap(Connection conn) throws ServerException {
 
-        Map map = new HashMap();
-        Iterator iter = getFormats(conn).iterator();
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        Iterator<CachedMetadataFormat> iter = getFormats(conn).iterator();
         while (iter.hasNext()) {
             CachedMetadataFormat format = (CachedMetadataFormat) iter.next();
             map.put(format.getPrefix(), new Integer(format.getKey()));
@@ -394,8 +395,8 @@ public class RCDatabase {
         }
     }
 
-    public List getSetInfo(Connection conn) throws ServerException {
-        List list = new ArrayList();
+    public List<SetInfo> getSetInfo(Connection conn) throws ServerException {
+        List<SetInfo> list = new ArrayList<SetInfo>();
         Statement stmt = null;
         ResultSet rs = null;
         try {
@@ -414,8 +415,8 @@ public class RCDatabase {
     }
 
     // return a closeableiterator of string[] (path)
-    public List getSetInfoPaths(Connection conn) throws ServerException {
-        List list = new ArrayList();
+    public List<String[]> getSetInfoPaths(Connection conn) throws ServerException {
+        List<String[]> list = new ArrayList<String[]>();
         Statement stmt = null;
         ResultSet rs = null;
         try {
@@ -492,7 +493,7 @@ public class RCDatabase {
      */
     public void putRecord(Connection conn, 
                           ParsedRecord rec,
-                          Map formatKeyMap) throws ServerException {
+                          Map<String, Integer> formatKeyMap) throws ServerException {
         String xmlPath = rec.getSourceInfo();
         Statement stmt = null;
         ResultSet rs = null;
@@ -542,7 +543,7 @@ public class RCDatabase {
                 // Modified rcRecord. Now list the ids of the sets it WAS in,
                 // and rectify that with the ones it's NOW in
 
-                List priorSetKeys = new ArrayList();
+                List<Integer> priorSetKeys = new ArrayList<Integer>();
                 rs = executeQuery(stmt, "SELECT setKey from rcMembership WHERE recordKey = " + recordKey);
                 while (rs.next()) {
                     priorSetKeys.add(new Integer(rs.getInt(1)));
@@ -561,9 +562,9 @@ public class RCDatabase {
                 }
 
                 // which sets is the record no longer a member of?
-                Iterator liter = priorSetKeys.iterator();
+                Iterator<Integer> liter = priorSetKeys.iterator();
                 while (liter.hasNext()) {
-                    Integer priorSetKey = (Integer) liter.next();
+                    Integer priorSetKey = liter.next();
                     int psk = priorSetKey.intValue();
                     boolean noLongerInSet = true;
                     for (int i = 0; i < setKeys.length; i++) {
@@ -608,16 +609,16 @@ public class RCDatabase {
         }
     }
 
-    private int[] getSetKeys(Statement stmt, List specs) throws ServerException {
+    private int[] getSetKeys(Statement stmt, List<String> specs) throws ServerException {
         ResultSet rs = null;
         try {
             int[] keys = new int[specs.size()];
             for (int i = 0; i < specs.size(); i++) {
-                rs = executeQuery(stmt, "SELECT setKey from rcSet WHERE setSpec = " + qs((String) specs.get(i)));
+                rs = executeQuery(stmt, "SELECT setKey from rcSet WHERE setSpec = " + qs(specs.get(i)));
                 if (rs.next()) {
                     keys[i] = rs.getInt(1);
                 } else {
-                    throw new ServerException("Record contains setSpec not listed sets: " + (String) specs.get(i));
+                    throw new ServerException("Record contains setSpec not listed sets: " + specs.get(i));
                 }
             }
             return keys;
@@ -709,7 +710,7 @@ public class RCDatabase {
     //       the responsibility of releasing the connection in some cases.
     //       In particular, if this method does NOT return an iterator
     //       that is attached to a ResultSet, it must release the connection.
-    public CloseableIterator findRecordInfo(Connection conn,
+    public CloseableIterator<String[]> findRecordInfo(Connection conn,
                                              Date from,
                                              Date until,
                                              String prefix,
@@ -733,7 +734,7 @@ public class RCDatabase {
                 // no such format -- return an empty iterator
                 try { rs.close(); } catch (Exception e) { }
                 try { stmt.close(); } catch (Exception e) { }
-                return new RemoteIteratorImpl(new ArrayList().iterator());
+                return new RemoteIteratorImpl<String[]>(new ArrayList<String[]>().iterator());
             }
             int formatKey = rs.getInt(1);
             rs.close();
@@ -746,7 +747,7 @@ public class RCDatabase {
                     // no such set -- return an empty iterator
                     try { rs.close(); } catch (Exception e) { }
                     try { stmt.close(); } catch (Exception e) { }
-                    return new RemoteIteratorImpl(new ArrayList().iterator());
+                    return new RemoteIteratorImpl<String[]>(new ArrayList<String[]>().iterator());
                 }
                 setKey = rs.getInt(1);
                 rs.close();
@@ -807,25 +808,25 @@ public class RCDatabase {
     private void createTables(Connection conn,
                               DDLConverter ddlc) throws ServerException {
         logger.debug("Creating tables...");
-        List specs;
+        List<TableSpec> specs;
         try {
             InputStream in = this.getClass().getResourceAsStream("/dbspec.xml");
             specs = TableSpec.getTableSpecs(in);
         } catch (Exception e) {
             throw new ServerException("Unable to initialize tablespecs", e);
         }
-        List createdCommands = new ArrayList();
-        Iterator iter = specs.iterator();
+        List<String> createdCommands = new ArrayList<String>();
+        Iterator<TableSpec> iter = specs.iterator();
         Statement stmt = null;
         String tableName = null;
         String command = null;
         try {
             stmt = getStatement(conn, false);
             while (iter.hasNext()) {
-                TableSpec spec = (TableSpec) iter.next();
+                TableSpec spec = iter.next();
                 tableName = spec.getName();
                 logger.info("Creating " + tableName + " table");
-                List commands = ddlc.getDDL(spec);
+                List<String> commands = ddlc.getDDL(spec);
                 for (int i = 0; i < commands.size(); i++) {
                     command = (String) commands.get(i);
                     executeUpdate(stmt, command);

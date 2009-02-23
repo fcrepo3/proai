@@ -4,11 +4,11 @@ import java.util.Iterator;
 
 import proai.driver.RemoteIterator;
 
-public class RemoteIteratorImpl implements RemoteIterator {
+public class RemoteIteratorImpl<T> implements RemoteIterator<T> {
 
-    private Iterator m_iter;
+    private Iterator<T> m_iter;
 
-    public RemoteIteratorImpl(Iterator iter) {
+    public RemoteIteratorImpl(Iterator<T> iter) {
         m_iter = iter;
     }
 
@@ -16,7 +16,7 @@ public class RemoteIteratorImpl implements RemoteIterator {
         return m_iter.hasNext();
     }
 
-    public Object next() {
+    public T next() {
         return m_iter.next();
     }
 

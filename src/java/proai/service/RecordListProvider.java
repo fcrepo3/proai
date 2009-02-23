@@ -6,7 +6,7 @@ import proai.*;
 import proai.cache.*;
 import proai.error.*;
 
-public class RecordListProvider implements ListProvider {
+public class RecordListProvider implements ListProvider<CachedContent> {
 
     private RecordCache m_cache;
     private int m_incompleteListSize;
@@ -33,12 +33,12 @@ public class RecordListProvider implements ListProvider {
         m_set = set;
     }
 
-    public CloseableIterator getList() throws 
+    public CloseableIterator<CachedContent> getList() throws 
                    CannotDisseminateFormatException,
                    NoRecordsMatchException,
                    NoSetHierarchyException,
                    ServerException {
-        CloseableIterator iter = m_cache.getRecordsContent(m_from,
+        CloseableIterator<CachedContent> iter = m_cache.getRecordsContent(m_from,
                                                            m_until,
                                                            m_prefix,
                                                            m_set,
@@ -49,7 +49,7 @@ public class RecordListProvider implements ListProvider {
             throw new CannotDisseminateFormatException(Responder.ERR_NO_SUCH_FORMAT);
         }
         if (m_set != null) {
-            CloseableIterator sic = m_cache.getSetInfoContent();
+            CloseableIterator<SetInfo> sic = m_cache.getSetInfoContent();
             boolean supportsSets = sic.hasNext();
             try { sic.close(); } catch (Exception e) { }
             if (!supportsSets) {
@@ -59,12 +59,12 @@ public class RecordListProvider implements ListProvider {
         throw new NoRecordsMatchException(Responder.ERR_NO_RECORDS_MATCH);
     }
 
-    public CloseableIterator getPathList() throws 
+    public CloseableIterator<String[]> getPathList() throws 
                    CannotDisseminateFormatException,
                    NoRecordsMatchException,
                    NoSetHierarchyException,
                    ServerException {
-        CloseableIterator iter = m_cache.getRecordsPaths(m_from,
+        CloseableIterator<String[]> iter = m_cache.getRecordsPaths(m_from,
                                                          m_until,
                                                          m_prefix,
                                                          m_set);
@@ -74,7 +74,7 @@ public class RecordListProvider implements ListProvider {
             throw new CannotDisseminateFormatException(Responder.ERR_NO_SUCH_FORMAT);
         }
         if (m_set != null) {
-            CloseableIterator sic = m_cache.getSetInfoContent();
+            CloseableIterator<SetInfo> sic = m_cache.getSetInfoContent();
             boolean supportsSets = sic.hasNext();
             try { sic.close(); } catch (Exception e) { }
             if (!supportsSets) {

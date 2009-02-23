@@ -1,6 +1,5 @@
 package proai.service;
 
-import proai.*;
 import proai.error.*;
 
 public interface Session {

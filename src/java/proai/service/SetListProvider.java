@@ -4,7 +4,7 @@ import proai.*;
 import proai.cache.*;
 import proai.error.*;
 
-public class SetListProvider implements ListProvider {
+public class SetListProvider implements ListProvider<SetInfo> {
 
     private RecordCache m_cache;
     private int m_incompleteListSize;
@@ -15,15 +15,15 @@ public class SetListProvider implements ListProvider {
         m_incompleteListSize = incompleteListSize;
     }
 
-    public CloseableIterator getList() throws ServerException {
-        CloseableIterator iter = m_cache.getSetInfoContent();
+    public CloseableIterator<SetInfo> getList() throws ServerException {
+        CloseableIterator<SetInfo> iter = m_cache.getSetInfoContent();
         if (iter.hasNext()) return iter;
         try { iter.close(); } catch (Exception e) { }
         throw new NoSetHierarchyException(Responder.ERR_NO_SET_HIERARCHY);
     }
 
-    public CloseableIterator getPathList() throws ServerException {
-        CloseableIterator iter = m_cache.getSetInfoPaths();
+    public CloseableIterator<String[]> getPathList() throws ServerException {
+        CloseableIterator<String[]> iter = m_cache.getSetInfoPaths();
         if (iter.hasNext()) return iter;
         try { iter.close(); } catch (Exception e) { }
         throw new NoSetHierarchyException(Responder.ERR_NO_SET_HIERARCHY);

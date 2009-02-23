@@ -5,7 +5,6 @@ import java.text.*;
 import java.util.*;
 
 import junit.framework.*;
-import junit.extensions.*;
 
 import proai.*;
 import proai.driver.*;
@@ -55,9 +54,9 @@ public class OAIDriverImplTest extends TestCase {
     }
 
     public void testFormats() throws Exception {
-        Iterator iter = m_impl.listMetadataFormats();
+        Iterator<? extends MetadataFormat> iter = m_impl.listMetadataFormats();
         while (iter.hasNext()) {
-            MetadataFormat format = (MetadataFormat) iter.next();
+            MetadataFormat format = iter.next();
             String prefix = format.getPrefix();
             String uri = format.getNamespaceURI();
             String loc = format.getSchemaLocation();
@@ -77,9 +76,9 @@ public class OAIDriverImplTest extends TestCase {
     }
 
     public void testSets() throws Exception {
-        Iterator iter = m_impl.listSetInfo();
+        Iterator<? extends SetInfo> iter = m_impl.listSetInfo();
         while (iter.hasNext()) {
-            SetInfo info = (SetInfo) iter.next();
+            SetInfo info = iter.next();
             String spec = info.getSetSpec();
             System.out.println("Set spec = " + spec);
             assertTrue(spec.equals(ABOVE_TWO_SPEC) 
@@ -93,7 +92,7 @@ public class OAIDriverImplTest extends TestCase {
     }
 
     public void testRecords() throws Exception {
-        Iterator iter;
+        Iterator<? extends Record> iter;
         Date fromDate = null;
         Date untilDate = m_impl.getLatestDate();
 
@@ -135,10 +134,10 @@ public class OAIDriverImplTest extends TestCase {
 
     }
 
-    public void checkRecords(Iterator iter, int[] expecting) throws Exception {
+    public void checkRecords(Iterator<? extends Record> iter, int[] expecting) throws Exception {
         boolean[] saw = new boolean[expecting.length]; 
         while (iter.hasNext()) {
-            Record rec = (Record) iter.next();
+            Record rec =  iter.next();
             String id = rec.getItemID();
             System.out.println("  Found Record with itemID = " + id);
             int n = Integer.parseInt(id.substring(id.length() - 1));

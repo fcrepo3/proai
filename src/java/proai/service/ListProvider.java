@@ -4,12 +4,12 @@ import proai.*;
 import proai.cache.*;
 import proai.error.*;
 
-public interface ListProvider {
+public interface ListProvider<T> {
 
-    public CloseableIterator getList() throws ServerException;
+    public CloseableIterator<T> getList() throws ServerException;
 
     // abbreviated form of above -- gets String[]s of ("cachePath" [, "dateString"])
-    public CloseableIterator getPathList() throws ServerException;
+    public CloseableIterator<String[]> getPathList() throws ServerException;
 
     public RecordCache getRecordCache();
 

@@ -1,11 +1,6 @@
 package proai.test;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
-
 import junit.framework.*;
-import junit.extensions.*;
 
 import proai.cache.*;
 

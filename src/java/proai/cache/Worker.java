@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 
 import net.sf.bvalid.Validator;
-import net.sf.bvalid.ValidationException;
 
 import org.apache.log4j.Logger;
 
@@ -42,14 +41,14 @@ public class Worker extends Thread {
 
         _LOG.info("Worker started");
 
-        List queueItems = _updater.getNextBatch(null);
+        List<QueueItem> queueItems = _updater.getNextBatch(null);
 
         while (queueItems != null && !_updater.processingShouldStop()) {
 
-            Iterator iter = queueItems.iterator();
+            Iterator<QueueItem> iter = queueItems.iterator();
             while (iter.hasNext() && !_updater.processingShouldStop()) {
 
-                attempt((QueueItem) iter.next());
+                attempt(iter.next());
             }
 
             if (!_updater.processingShouldStop()) {

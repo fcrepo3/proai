@@ -4,11 +4,11 @@ import java.util.Iterator;
 
 import proai.error.ServerException;
 
-public interface CloseableIterator extends Iterator {
+public interface CloseableIterator<T> extends Iterator<T> {
 
     public boolean hasNext() throws ServerException;
 
-    public Object next() throws ServerException;
+    public T next() throws ServerException;
 
     public void close() throws ServerException;
 

@@ -9,7 +9,7 @@ import proai.*;
 import proai.cache.*;
 import proai.error.*;
 
-public class CacheSession extends Thread
+public class CacheSession<T> extends Thread
                           implements Session {
 
     private static final Logger _LOG =
@@ -18,7 +18,7 @@ public class CacheSession extends Thread
     private SessionManager _manager;
     private File _baseDir;
     private int _secondsBetweenRequests;
-    private ListProvider _provider;
+    private ListProvider<T> _provider;
 
     private String _sessionKey;
 
@@ -34,7 +34,7 @@ public class CacheSession extends Thread
     public CacheSession(SessionManager manager,
                    File baseDir,
                    int secondsBetweenRequests,
-                   ListProvider provider) {
+                   ListProvider<T> provider) {
         _manager = manager;
         _baseDir = baseDir;
         _secondsBetweenRequests = secondsBetweenRequests;
@@ -63,9 +63,8 @@ public class CacheSession extends Thread
 
     public void run() {
         _LOG.info(_sessionKey + " retrieval thread started");
-        RecordCache cache = _provider.getRecordCache();
         int incompleteListSize = _provider.getIncompleteListSize();
-        CloseableIterator iter = null;
+        CloseableIterator<String[]> iter = null;
         PrintWriter out = null;
         try {
             iter = _provider.getPathList();  // if empty, the impl should throw the right exception here

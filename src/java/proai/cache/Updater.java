@@ -19,7 +19,6 @@ import proai.error.RepositoryException;
 import proai.error.ServerException;
 import proai.error.ImmediateShutdownException;
 import proai.util.SetSpec;
-import proai.util.StreamUtil;
 
 public class Updater extends Thread {
 
@@ -33,7 +32,6 @@ public class Updater extends Thread {
     private int _maxRecordsPerTransaction;
 
     private OAIDriver _driver;
-    private RecordCache _cache;
     private RCDatabase _db;
     private RCDisk _disk;
     private Validator _validator;
@@ -59,7 +57,6 @@ public class Updater extends Thread {
                    int maxRecordsPerTransaction,
                    Validator validator) {
         _driver = driver;
-        _cache = cache;
         _db = db;
         _disk = disk;
 
@@ -165,15 +162,12 @@ public class Updater extends Thread {
                         int pruneKey = Integer.parseInt(parts[0]);
                         File file = _disk.getFile(parts[1]);
 
-                        // attempt to delete from disk
-                        boolean removeFromPruneList = true;
                         if (file.exists()) {
                             boolean deleted = file.delete();
                             if (deleted) {
                                 _LOG.debug("Deleted old cache file: " + parts[1]);
                             } else {
                                 _LOG.warn("Unable to delete old cache file (will try again later): " + parts[1]);
-                                removeFromPruneList = false;
                             }
                         } else {
                             _LOG.debug("No need to delete non-existing old cache file: " + parts[1]);
@@ -260,7 +254,7 @@ public class Updater extends Thread {
                     updateIdentify(conn);
     
                     checkImmediateShutdown();
-                    List allPrefixes = updateFormats(conn);
+                    List<String> allPrefixes = updateFormats(conn);
     
                     checkImmediateShutdown();
                     updateSets(conn);
@@ -311,13 +305,13 @@ public class Updater extends Thread {
      * <p>This will add any new formats, modify any changed formats,
      * and delete any no-longer-existing formats (and associated records).
      */
-    private List updateFormats(Connection conn) throws Exception {
+    private List<String> updateFormats(Connection conn) throws Exception {
 
         _LOG.info("Updating metadata formats...");
 
         // apply new / updated
-        RemoteIterator riter = _driver.listMetadataFormats();
-        List newPrefixes = new ArrayList();
+        RemoteIterator<? extends MetadataFormat> riter = _driver.listMetadataFormats();
+        List<String> newPrefixes = new ArrayList<String>();
         try {
             while (riter.hasNext()) {
 
@@ -335,10 +329,10 @@ public class Updater extends Thread {
         }
 
         // apply deleted
-        Iterator iter = _db.getFormats(conn).iterator();
+        Iterator<CachedMetadataFormat> iter = _db.getFormats(conn).iterator();
         while (iter.hasNext()) {
 
-            CachedMetadataFormat format = (CachedMetadataFormat) iter.next();
+            CachedMetadataFormat format = iter.next();
             String oldPrefix = format.getPrefix();
             if (!newPrefixes.contains(oldPrefix)) {
 
@@ -361,9 +355,9 @@ public class Updater extends Thread {
         _LOG.info("Updating sets...");
 
         // apply new / updated
-        RemoteIterator riter = _driver.listSetInfo();
-        Set newSpecs = new HashSet ();
-        Set missingSpecs = new HashSet ();
+        RemoteIterator<? extends SetInfo> riter = _driver.listSetInfo();
+        Set<String> newSpecs = new HashSet<String> ();
+        Set<String> missingSpecs = new HashSet<String> ();
         
         try {
             while (riter.hasNext()) {
@@ -397,16 +391,14 @@ public class Updater extends Thread {
         }
 
         /* Add any sets that are IMPLIED to exist, but weren't defined */
-        for (Iterator i = missingSpecs.iterator(); i.hasNext();) {
-            String possiblyMissing = (String) i.next();
+        for (String possiblyMissing : missingSpecs) {
             
             if (!SetSpec.isValid(possiblyMissing)) {
                 throw new RepositoryException("SetSpec '" + possiblyMissing
                                               + "' is malformed");
             }
             
-        	for (Iterator m = SetSpec.allSetsFor(possiblyMissing).iterator(); m.hasNext();) {
-        	    String spec = (String) m.next();
+        	for (String spec : SetSpec.allSetsFor(possiblyMissing)) {
         		if (!newSpecs.contains(spec)) {
         			_db.putSetInfo(conn, spec, _disk.write(
         					SetSpec.defaultInfoFor(spec)));
@@ -417,7 +409,7 @@ public class Updater extends Thread {
         }
         
         // apply deleted
-        Iterator iter = _db.getSetInfo(conn).iterator();
+        Iterator<SetInfo> iter = _db.getSetInfo(conn).iterator();
         while (iter.hasNext()) {
 
             String oldSpec = ((SetInfo) iter.next()).getSetSpec();
@@ -430,18 +422,16 @@ public class Updater extends Thread {
     }
 
     private void queueUpdatedRecords(Connection conn, 
-                                     List allPrefixes,
+                                     List<String> allPrefixes,
                                      long latestRemoteDate) throws Exception {
 
         _LOG.info("Querying and queueing updated records...");
 
         long queueStartTime = System.currentTimeMillis();
         int totalQueuedCount = 0;
-
-        Iterator iter = allPrefixes.iterator();
-        while (iter.hasNext()) {
-
-            String mdPrefix = (String) iter.next();
+;
+        for (String mdPrefix : allPrefixes) {
+        	
             long lastPollDate = _db.getLastPollDate(conn, mdPrefix);
 
             // if something may have changed remotely *after* the last
@@ -453,7 +443,7 @@ public class Updater extends Thread {
                         + lastPollDate + " is less than " + latestRemoteDate);
 
                 checkImmediateShutdown();
-                RemoteIterator riter = _driver.listRecords(new Date(lastPollDate),
+                RemoteIterator<? extends Record> riter = _driver.listRecords(new Date(lastPollDate),
                                                            new Date(latestRemoteDate),
                                                            mdPrefix);
                 try {
@@ -462,7 +452,7 @@ public class Updater extends Thread {
 
                     while (riter.hasNext()) {
 
-                        Record record = (Record) riter.next();
+                        Record record = riter.next();
                         checkImmediateShutdown();
                         _db.queueRemoteRecord(conn,
                                               record.getItemID(),
@@ -634,9 +624,9 @@ public class Updater extends Thread {
     }
 
     // return null if no more batches or processing should stop
-    protected List getNextBatch(List finishedItems) {
+    protected List<QueueItem> getNextBatch(List<QueueItem> finishedItems) {
 
-        List nextBatch = null;
+        List<QueueItem> nextBatch = null;
 
         if (!processingShouldStop()) {
 
@@ -647,7 +637,7 @@ public class Updater extends Thread {
             try {
                 synchronized (_queueIterator) {
                     if (_queueIterator.hasNext()) {
-                        nextBatch = new ArrayList();
+                        nextBatch = new ArrayList<QueueItem>();
                         while (_queueIterator.hasNext() && 
                                nextBatch.size() < _maxWorkBatchSize) {
                             nextBatch.add(_queueIterator.next());

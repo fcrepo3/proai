@@ -28,7 +28,7 @@ public class SessionManager extends Thread {
     private File m_baseDir;
     private int m_secondsBetweenRequests;
 
-    private Map m_sessions;
+    private Map<String, Session> m_sessions;
     private boolean m_threadNeedsToFinish;
     private boolean m_threadFinished;
 
@@ -70,7 +70,7 @@ public class SessionManager extends Thread {
         }
 
         m_secondsBetweenRequests = secondsBetweenRequests;
-        m_sessions = new HashMap();
+        m_sessions = new HashMap<String, Session>();
         setName("Session-Reaper");
         start();
     }
@@ -103,13 +103,13 @@ public class SessionManager extends Thread {
      * If force is true, clean up all sessions.
      */
     private void cleanupSessions(boolean force) {
-        List toCleanKeys = new ArrayList();
-        List toCleanSessions = new ArrayList();
+        List<String> toCleanKeys = new ArrayList<String>();
+        List<Session> toCleanSessions = new ArrayList<Session>();
         synchronized (m_sessions) {
-            Iterator iter = m_sessions.keySet().iterator();
+            Iterator<String> iter = m_sessions.keySet().iterator();
             while (iter.hasNext()) {
-                String key = (String) iter.next();
-                Session sess = (Session) m_sessions.get(key);
+                String key = iter.next();
+                Session sess = m_sessions.get(key);
                 if (force || sess.hasExpired()) {
                     toCleanKeys.add(key);
                     toCleanSessions.add(sess);
@@ -149,9 +149,9 @@ public class SessionManager extends Thread {
 
     //////////////////////////////////////////////////////////////////////////
 
-    public ResponseData list(ListProvider provider) throws ServerException {
+    public <T> ResponseData list(ListProvider<T> provider) throws ServerException {
         // Session session = new SnapshotSession(this, m_baseDir, m_secondsBetweenRequests, provider);
-        Session session = new CacheSession(this, m_baseDir, m_secondsBetweenRequests, provider);
+        Session session = new CacheSession<T>(this, m_baseDir, m_secondsBetweenRequests, provider);
         return session.getResponseData(0);
     }
 

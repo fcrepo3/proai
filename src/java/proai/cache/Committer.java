@@ -30,9 +30,9 @@ public class Committer extends Thread {
     private int _maxCommitQueueSize;
     private int _maxRecordsPerTransaction;
 
-    private Map _formatKeyMap;
+    private Map<String, Integer> _formatKeyMap;
 
-    private List _commitQueue;
+    private List<QueueItem> _commitQueue;
     private int _lastCommitQueueSize;
 
     /**
@@ -66,7 +66,7 @@ public class Committer extends Thread {
         _maxCommitQueueSize = maxCommitQueueSize;
         _maxRecordsPerTransaction = maxRecordsPerTransaction;
 
-        _commitQueue = new ArrayList(_maxCommitQueueSize);
+        _commitQueue = new ArrayList<QueueItem>(_maxCommitQueueSize);
 
         // get this now -- it won't change while the thread is running
         Connection conn = null;
@@ -91,7 +91,7 @@ public class Committer extends Thread {
      * @return whether the handoff was successful.  The handoff will only
      *         fail if the <code>Committer</code> thread has been stopped.
      */
-    protected synchronized boolean handoff(List queueItems) {
+    protected synchronized boolean handoff(List<QueueItem> queueItems) {
 
         int toAddSize = queueItems.size();
         while (!_finishedRunning && 
@@ -124,7 +124,7 @@ public class Committer extends Thread {
 
         // phase one
         while (_updater.anyWorkersAreRunning()) {
-            List nextItems = getNextTransactionItems();
+            List<QueueItem> nextItems = getNextTransactionItems();
             while (nextItems == null && _updater.anyWorkersAreRunning()) {
                 // wait for the queue to have items
                 _LOG.debug("Commit queue is empty; waiting for worker(s)");
@@ -137,7 +137,7 @@ public class Committer extends Thread {
         }
 
         // phase two
-        List lastItems = getNextTransactionItems();
+        List<QueueItem> lastItems = getNextTransactionItems();
         while (!_updater.processingShouldStop() && lastItems != null) {
             commit(lastItems);
             lastItems = getNextTransactionItems();
@@ -148,7 +148,7 @@ public class Committer extends Thread {
 
     }
 
-    private void commit(List items) {
+    private void commit(List<QueueItem> items) {
 
         Connection conn = null;
         boolean startedTransaction = false;
@@ -161,9 +161,8 @@ public class Committer extends Thread {
             startedTransaction = true;
 
             // update the database for each record, as necessary
-            Iterator iter = items.iterator();
-            while (iter.hasNext()) {
-                updateItem(conn, (QueueItem) iter.next());
+            for (QueueItem item : items) {
+            	updateItem(conn, item);
             }
 
             // set the estimated commit date for all added/modified records
@@ -202,10 +201,9 @@ public class Committer extends Thread {
             }
 
             // ...delete uncommitted files
-            Iterator toDelete = items.iterator();
-            while (toDelete.hasNext()) {
-                ParsedRecord pr = ((QueueItem) toDelete.next()).getParsedRecord();
-                if (pr != null) pr.deleteFile();
+            for (QueueItem item : items) {
+            	ParsedRecord pr = item.getParsedRecord();
+            	if (pr != null) pr.deleteFile();
             }
 
             // ...then signal error to updater
@@ -264,13 +262,13 @@ public class Committer extends Thread {
      *
      * Otherwise, return <code>null</code>.
      */
-    private List getNextTransactionItems() {
+    private List<QueueItem> getNextTransactionItems() {
 
         synchronized (_commitQueue) {
             if (_commitQueue.size() == 0) {
                 return null;
             } else {
-                List nextItems = new ArrayList();
+                List<QueueItem> nextItems = new ArrayList<QueueItem>();
                 while ( (_commitQueue.size() > 0) &&
                         (nextItems.size() < _maxRecordsPerTransaction) ) {
                     nextItems.add(_commitQueue.remove(0));
@@ -279,7 +277,6 @@ public class Committer extends Thread {
                 return nextItems;
             }
         }
-        
     }
 
 

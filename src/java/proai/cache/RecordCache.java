@@ -16,7 +16,6 @@ import net.sf.bvalid.catalog.SchemaCatalog;
 import net.sf.bvalid.catalog.SchemaIndex;
 import net.sf.bvalid.locator.SchemaLocator;
 import net.sf.bvalid.locator.CachingSchemaLocator;
-import net.sf.bvalid.locator.CatalogSchemaLocator;
 import net.sf.bvalid.locator.URLSchemaLocator;
 
 import org.apache.commons.dbcp.BasicDataSource;
@@ -26,11 +25,9 @@ import org.apache.log4j.Logger;
 
 import proai.CloseableIterator;
 import proai.MetadataFormat;
-import proai.Record;
 import proai.SetInfo;
 import proai.Writable;
 import proai.driver.OAIDriver;
-import proai.driver.RemoteIterator;
 import proai.error.ServerException;
 import proai.util.DDLConverter;
 import proai.util.StreamUtil;
@@ -82,7 +79,6 @@ public class RecordCache extends Thread {
     private Updater m_updater;
     private OAIDriver m_driver;
     private File m_baseDir;
-    private Validator m_validator;
 
     private RCDatabase m_rcdb;
     private RCDisk m_rcDisk;
@@ -91,11 +87,7 @@ public class RecordCache extends Thread {
 
         String baseDir            = getRequiredParam(props, PROP_BASEDIR);
         String oaiDriverClassName = getRequiredParam(props, PROP_OAIDRIVERCLASSNAME);
-        String pollSeconds        = getRequiredParam(props, PROP_POLLSECONDS);
-        String dbURL              = getRequiredParam(props, PROP_DB_URL);
         String dbDriverClassName  = getRequiredParam(props, PROP_DB_DRIVERCLASSNAME);
-        String dbUsername         = getRequiredParam(props, PROP_DB_USERNAME);
-        String dbPassword         = getRequiredParam(props, PROP_DB_PASSWORD);
 
         boolean mySQLTrickling = false;
         String mt = props.getProperty(PROP_DB_MYSQL_TRICKLING);
@@ -129,7 +121,7 @@ public class RecordCache extends Thread {
                  .createDataSource(getDBProperties(props, false));
             pool.setDriverClassName(dbDriverClassName);
             Properties connProps = getDBProperties(props, true);
-            Enumeration e = connProps.propertyNames();
+            Enumeration<?> e = connProps.propertyNames();
             while (e.hasMoreElements()) {
                 String name = (String) e.nextElement();
                 pool.addConnectionProperty(name, (String) connProps.getProperty(name));
@@ -266,7 +258,7 @@ public class RecordCache extends Thread {
                 }
             }
 
-            Map opts = new HashMap();
+            Map<ValidatorOption, String> opts = new HashMap<ValidatorOption, String>();
             opts.put(ValidatorOption.CACHE_PARSED_GRAMMARS, "true");
             try {
                 validator = ValidatorFactory.getValidator(SchemaLanguage.XSD,
@@ -396,7 +388,7 @@ public class RecordCache extends Thread {
     private static final Properties getDBProperties(Properties props, 
                                                     boolean conn) {
         Properties dbProps = new Properties();
-        Enumeration e = props.propertyNames();
+        Enumeration<?> e = props.propertyNames();
         while (e.hasMoreElements()) {
             String name = (String) e.nextElement();
             if (name.startsWith(dbpfx)) {
@@ -468,7 +460,7 @@ public class RecordCache extends Thread {
         Connection conn = null;
         try {
             conn = getConnection();
-            List formats = m_rcdb.getFormats(conn, identifier);
+            List<CachedMetadataFormat> formats = m_rcdb.getFormats(conn, identifier);
             if (identifier != null && formats.size() == 0) return null;
             return new CachedContent(getFormatsXMLString(formats));
         } catch (SQLException e) {
@@ -478,12 +470,12 @@ public class RecordCache extends Thread {
         }
     }
 
-    public CloseableIterator getSetInfoContent() throws ServerException {
+    public CloseableIterator<SetInfo> getSetInfoContent() throws ServerException {
         Connection conn = null;
         try {
             conn = getConnection();
-            List list = m_rcdb.getSetInfo(conn);
-            CloseableIterator setInfo = new proai.driver.impl.RemoteIteratorImpl(list.iterator());
+            List<SetInfo> list = m_rcdb.getSetInfo(conn);
+            CloseableIterator<SetInfo> setInfo = new proai.driver.impl.RemoteIteratorImpl<SetInfo>(list.iterator());
             return setInfo;
         } catch (SQLException e) {
             throw new ServerException("Error getting a database connection", e);
@@ -492,12 +484,12 @@ public class RecordCache extends Thread {
         }
     }
 
-    public CloseableIterator getSetInfoPaths() throws ServerException {
+    public CloseableIterator<String[]> getSetInfoPaths() throws ServerException {
         Connection conn = null;
         try {
             conn = getConnection();
-            List list = m_rcdb.getSetInfoPaths(conn);
-            CloseableIterator setInfo = new proai.driver.impl.RemoteIteratorImpl(list.iterator());
+            List<String[]> list = m_rcdb.getSetInfoPaths(conn);
+            CloseableIterator<String[]> setInfo = new proai.driver.impl.RemoteIteratorImpl<String[]>(list.iterator());
             return setInfo;
         } catch (SQLException e) {
             throw new ServerException("Error getting a database connection", e);
@@ -506,7 +498,7 @@ public class RecordCache extends Thread {
         }
     }
 
-    public CloseableIterator getRecordsContent(Date from,
+    public CloseableIterator<CachedContent> getRecordsContent(Date from,
                                                Date until,
                                                String prefix,
                                                String set,
@@ -531,7 +523,7 @@ public class RecordCache extends Thread {
         }
     }
 
-    public CloseableIterator getRecordsPaths(Date from,
+    public CloseableIterator<String[]> getRecordsPaths(Date from,
                                              Date until,
                                              String prefix,
                                              String set) throws ServerException {
@@ -556,9 +548,9 @@ public class RecordCache extends Thread {
         Connection conn = null;
         try {
             conn = getConnection();
-            Iterator iter = m_rcdb.getFormats(conn).iterator();
+            Iterator<CachedMetadataFormat> iter = m_rcdb.getFormats(conn).iterator();
             while (iter.hasNext()) {
-                MetadataFormat fmt = (MetadataFormat) iter.next();
+                MetadataFormat fmt = iter.next();
                 if (fmt.getPrefix().equals(mdPrefix)) return true;
             }
             return false;
@@ -569,12 +561,12 @@ public class RecordCache extends Thread {
         }
     }
 
-    private String getFormatsXMLString(List formats) {
+    private String getFormatsXMLString(List<? extends MetadataFormat> formats) {
         StringBuffer buf = new StringBuffer();
         buf.append("<ListMetadataFormats>\n");
-        Iterator iter = formats.iterator();
+        Iterator<? extends MetadataFormat> iter = formats.iterator();
         while (iter.hasNext()) {
-            MetadataFormat fmt = (MetadataFormat) iter.next();
+            MetadataFormat fmt = iter.next();
             buf.append("  <metadataFormat>\n");
             buf.append("    <metadataPrefix>" + fmt.getPrefix() + "</metadataPrefix>\n");
             buf.append("    <schema>" + fmt.getSchemaLocation() + "</schema>\n");

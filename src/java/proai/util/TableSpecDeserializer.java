@@ -7,9 +7,9 @@ import org.xml.sax.helpers.*;
 public class TableSpecDeserializer
         extends DefaultHandler {
 
-    private ArrayList m_tableSpecList;
+    private ArrayList<TableSpec> m_tableSpecList;
 
-    private ArrayList m_columnSpecList;
+    private ArrayList<ColumnSpec> m_columnSpecList;
     private String m_table_name;
     private String m_table_primaryKey;
     private String m_table_type;
@@ -26,11 +26,11 @@ public class TableSpecDeserializer
     private String m_column_foreignKey_onDeleteAction;
 
     protected TableSpecDeserializer() {
-        m_tableSpecList=new ArrayList();
-        m_columnSpecList=new ArrayList();
+        m_tableSpecList=new ArrayList<TableSpec>();
+        m_columnSpecList=new ArrayList<ColumnSpec>();
     }
 
-    public List getTableSpecs() {
+    public List<TableSpec> getTableSpecs() {
         return m_tableSpecList;
     }
 
@@ -99,7 +99,7 @@ public class TableSpecDeserializer
             m_table_name=null;
             m_table_primaryKey=null;
             m_table_type=null;
-            m_columnSpecList=new ArrayList();
+            m_columnSpecList=new ArrayList<ColumnSpec>();
         } else if (localName.equals("column")) {
             m_columnSpecList.add(new ColumnSpec(m_column_name, m_column_type, m_column_binary,
                     m_column_default, m_column_autoIncrement, m_column_index,

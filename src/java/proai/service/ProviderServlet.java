@@ -17,6 +17,7 @@ import proai.error.ServerException;
 import proai.util.StreamUtil;
 
 public class ProviderServlet extends HttpServlet {
+	static final long serialVersionUID = 1;
 
     private static final Logger logger =
             Logger.getLogger(ProviderServlet.class.getName());
@@ -32,6 +33,7 @@ public class ProviderServlet extends HttpServlet {
     /**
      * Entry point for handling OAI requests.
      */
+    @SuppressWarnings("unchecked")
     public void doGet(HttpServletRequest request, 
                       HttpServletResponse response)  {
 
@@ -218,26 +220,10 @@ public class ProviderServlet extends HttpServlet {
         }
     }
 
-    private void sendBusy(HttpServletResponse response) {
-        try {
-            response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-            response.setHeader("Retry-After", "" + m_retrySeconds);
-            response.setContentType("text/plain; charset=UTF-8");
-            PrintWriter writer = response.getWriter();
-            writer.println("The OAI provider is too busy.  Try again in " + m_retrySeconds + " seconds.");
-            writer.flush();
-            writer.close();
-        } catch (Throwable th) {
-            logger.warn("Error while sending SERVICE_UNAVAILABLE (503) response", th);
-        }
-    }
-
     public void doPost(HttpServletRequest request, 
                        HttpServletResponse response)  {
         doGet(request, response);
     }
-
-    private int m_retrySeconds;
 
     private Responder m_responder;
 
@@ -257,7 +243,6 @@ public class ProviderServlet extends HttpServlet {
 
     public void init(Properties props) throws ServerException {
         m_responder = new Responder(props);
-        m_retrySeconds = 60;
     }
 
     /**

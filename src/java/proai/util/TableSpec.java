@@ -16,7 +16,7 @@ import javax.xml.parsers.*;
 public class TableSpec {
 
     private String m_name;
-    private List m_columnSpecs;
+    private List<ColumnSpec> m_columnSpecs;
     private String m_primaryColumnName;
     private String m_type;
 
@@ -28,7 +28,7 @@ public class TableSpec {
      * @param columnSpecs ColumnSpec objects describing columns in the table.
      * @param primaryColumnName The column that is the primary key for the table.
      */
-    public TableSpec(String name, List columnSpecs, String primaryColumnName) {
+    public TableSpec(String name, List<ColumnSpec> columnSpecs, String primaryColumnName) {
         m_name=name;
         m_columnSpecs=columnSpecs;
         m_primaryColumnName=primaryColumnName;
@@ -48,7 +48,7 @@ public class TableSpec {
      * @param primaryColumnName The column that is the primary key for the table.
      * @param type The table type.
      */
-    public TableSpec(String name, List columnSpecs, String primaryColumnName, String type) {
+    public TableSpec(String name, List<ColumnSpec> columnSpecs, String primaryColumnName, String type) {
         m_name=name;
         m_columnSpecs=columnSpecs;
         m_primaryColumnName=primaryColumnName;
@@ -116,7 +116,7 @@ public class TableSpec {
      * @return TableSpec objects.
      * @throws IOException if an error occurs while parsing.
      */
-    public static List getTableSpecs(InputStream in) throws IOException {
+    public static List<TableSpec> getTableSpecs(InputStream in) throws IOException {
         try {
             SAXParserFactory spf = SAXParserFactory.newInstance();
             spf.setNamespaceAware(true);
@@ -161,7 +161,7 @@ public class TableSpec {
      *
      * @return An Iterator over ColumnSpec objects.
      */
-    public Iterator columnSpecIterator() {
+    public Iterator<ColumnSpec> columnSpecIterator() {
         return m_columnSpecs.iterator();
     }
 

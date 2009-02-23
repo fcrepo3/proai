@@ -1,7 +1,8 @@
 package proai.error;
 
 public class IdDoesNotExistException extends ProtocolException {
-
+	static final long serialVersionUID = 1;
+	
     public IdDoesNotExistException() {
         super("The value of the identifier argument is unknown or illegal in this repository.");
     }

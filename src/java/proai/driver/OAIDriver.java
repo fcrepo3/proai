@@ -56,7 +56,7 @@ public interface OAIDriver extends Writable {
      *
      * @see proai.MetadataFormat
      */
-    public RemoteIterator listMetadataFormats() throws RepositoryException;
+    public RemoteIterator<? extends MetadataFormat> listMetadataFormats() throws RepositoryException;
 
     /**
      * Get an iterator over a list of SetInfo objects representing all
@@ -71,7 +71,7 @@ public interface OAIDriver extends Writable {
      *
      * @see proai.SetInfo
      */
-    public RemoteIterator listSetInfo() throws RepositoryException;
+    public RemoteIterator<? extends SetInfo> listSetInfo() throws RepositoryException;
 
     /**
      * Get an iterator of <code>Record</code> objects representing all records 
@@ -84,7 +84,7 @@ public interface OAIDriver extends Writable {
      *
      * @see proai.Record
      */
-    public RemoteIterator listRecords(Date from, 
+    public RemoteIterator<? extends Record> listRecords(Date from, 
                                       Date until, 
                                       String mdPrefix) throws RepositoryException;
 

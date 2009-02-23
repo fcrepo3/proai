@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 
 import proai.Writable;
 import proai.error.ServerException;
-import proai.util.StreamUtil;
 
 /**
  * The file-based portion of the record cache.

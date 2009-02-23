@@ -24,7 +24,7 @@ import proai.error.ServerException;
  * The first is the relative filesystem path and the second is an 
  * ISO8601-formatted date (second precision).
  */
-public class StringResultIterator implements CloseableIterator {
+public class StringResultIterator implements CloseableIterator<String[]> {
 
     private static final Logger logger =
             Logger.getLogger(StringResultIterator.class.getName());
@@ -54,7 +54,7 @@ public class StringResultIterator implements CloseableIterator {
         return m_nextStringArray != null;
     }
 
-    public Object next() throws ServerException {
+    public String[] next() throws ServerException {
         String[] next = m_nextStringArray;
         m_nextStringArray = getNext();
         return next;

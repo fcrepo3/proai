@@ -13,8 +13,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import proai.Record;
-import proai.Writable;
-import proai.driver.impl.OAIDriverImpl;
 import proai.error.ServerException;
 import proai.util.StreamUtil;
 
@@ -29,7 +27,7 @@ public class ParsedRecord extends DefaultHandler implements Record {
 
     private File m_file;
     private Date m_date;
-    private List m_setSpecs;
+    private List<String> m_setSpecs;
 
     private SimpleDateFormat m_formatter1;
     private SimpleDateFormat m_formatter2;
@@ -48,7 +46,7 @@ public class ParsedRecord extends DefaultHandler implements Record {
         m_sourceInfo = sourceInfo;
         m_file = file;
         m_date = new Date(0);
-        m_setSpecs = new ArrayList();
+        m_setSpecs = new ArrayList<String>();
 
         m_formatter1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         m_formatter2 = new SimpleDateFormat("yyyy-MM-dd");
@@ -151,7 +149,7 @@ public class ParsedRecord extends DefaultHandler implements Record {
         return m_date;
     }
 
-    public List getSetSpecs() {
+    public List<String> getSetSpecs() {
         return m_setSpecs;
     }
 

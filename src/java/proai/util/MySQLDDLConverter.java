@@ -18,11 +18,11 @@ public class MySQLDDLConverter
         return "DROP TABLE " + tableName;
     }
 
-    public List getDDL(TableSpec spec) {
+    public List<String> getDDL(TableSpec spec) {
         StringBuffer out=new StringBuffer();
         StringBuffer end=new StringBuffer();
         out.append("CREATE TABLE " + spec.getName() + " (\n");
-        Iterator csi=spec.columnSpecIterator();
+        Iterator<ColumnSpec> csi=spec.columnSpecIterator();
         int csNum=0;
         while (csi.hasNext()) {
             if (csNum>0) {
@@ -111,7 +111,7 @@ public class MySQLDDLConverter
         if (spec.getType()!=null) {
             out.append(" TYPE=" + spec.getType());
         }
-        ArrayList l=new ArrayList();
+        ArrayList<String> l=new ArrayList<String>();
         l.add(out.toString());
         return l;
     }

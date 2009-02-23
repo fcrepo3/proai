@@ -1,11 +1,8 @@
 package proai.driver.impl;
 
 import java.io.File;
-import java.io.PrintWriter;
 
 import proai.Record;
-import proai.Writable;
-import proai.error.ServerException;
 
 public class RecordImpl implements Record {
 

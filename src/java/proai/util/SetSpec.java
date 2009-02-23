@@ -31,8 +31,8 @@ public abstract class SetSpec {
                 .matches("([A-Za-z0-9_!'$\\(\\)\\+\\-\\.\\*])+(:[A-Za-z0-9_!'$\\(\\)\\+\\-\\.\\*]+)*");
     }
 
-    public static Set allSetsFor(String spec) {
-        Set ancestors = new HashSet();
+    public static Set<String> allSetsFor(String spec) {
+        Set<String> ancestors = new HashSet<String>();
 
         ancestors.add(spec);
         if (hasParents(spec)) {
