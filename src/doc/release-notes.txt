@@ -21,3 +21,17 @@ Version 1.0 - January 4th, 2007
 
  o This version is compiled for Java 1.4, and works with Java 1.5.
    Future versions will likely not be compatible with Java 1.4.
+
+Version 1.1 - March 2009
+========================
+
+ o Misc cleanup and testing improvements
+
+Version 1.1.1 - May 2009
+========================
+
+ o No longer requires <record> elements from an OAIDriver to
+   declare their namespace in order for validation to work.
+   See https://fedora-commons.org/jira/browse/FCREPO-474
+
+ o This version is released under Apache 2
