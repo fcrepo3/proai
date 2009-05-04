@@ -61,6 +61,25 @@ public class Worker extends Thread {
         _LOG.info("Worker finished");
     }
 
+    private InputStream getRecordStreamForValidation(File recordFile) throws Exception {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        builder.append("<OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\">\n");
+        builder.append("<responseDate>2002-02-08T08:55:46Z</responseDate>\n");
+        builder.append("<request verb=\"GetRecord\" identifier=\"oai:arXiv.org:cs/0112017\" ");
+        builder.append("metadataPrefix=\"oai_dc\">http://arXiv.org/oai2</request>\n");
+        builder.append("<GetRecord>\n"); 
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(recordFile)));
+        String line = reader.readLine();
+        while (line != null) {
+            builder.append(line + "\n");
+            line = reader.readLine();
+        }
+        builder.append("</GetRecord>\n"); 
+        builder.append("</OAI-PMH>"); 
+        return new ByteArrayInputStream(builder.toString().getBytes("UTF-8"));
+    }
+
     private void attempt(QueueItem qi) {
 
         RCDiskWriter diskWriter = null;
@@ -83,7 +102,8 @@ public class Worker extends Thread {
             retrievalDelay = endFetchTime - startFetchTime;
 
             if (_validator != null) {
-                _validator.validate(new FileInputStream(diskWriter.getFile()),
+                
+                _validator.validate(getRecordStreamForValidation(diskWriter.getFile()),
                                     RecordCache.OAI_RECORD_SCHEMA_URL);
                 validationDelay = System.currentTimeMillis() - endFetchTime;
             }
