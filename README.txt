@@ -6,6 +6,7 @@
 
                Copyright (c) 2006-2007, Cornell University
               Copyright (c) 2008-2009, Fedora Commons, Inc.
+                   Copyright (c) 2009-2010, DuraSpace
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
