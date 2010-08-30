@@ -221,11 +221,6 @@ public class RecordCache extends Thread {
 
         logger.info("Initializing Record Cache...");
 
-        // guard against programmer error
-        if (s_pool != null) {
-            throw new ServerException("Multiple instances of RecordCache not allowed");
-        }
-
         s_pool = pool;
         m_driver = driver;
         m_baseDir = baseDir;
