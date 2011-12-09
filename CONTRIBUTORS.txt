@@ -1,3 +1,6 @@
+Simon Lamb - FCREPO-1039: Support for MySQL 5.5 (use ENGINE=InnoDB)
+    https://jira.duraspace.org/browse/FCREPO-1039
+
 Juan Corrales - jcorrales@users.sourceforge.net
     Submitted patch to pass OpenArchives registration validation.
     Sourceforge bug #1773259
