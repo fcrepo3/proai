@@ -23,13 +23,13 @@ public class ProviderServlet extends HttpServlet {
             Logger.getLogger(ProviderServlet.class.getName());
 
     /** Every response starts with this string. */
-    private static final String _XMLSTART = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                         + "<OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\"\n"
+    private static final String _PROC_INST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    private static final String _XMLSTART = "<OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\"\n"
                                          + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
                                          + "         xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/\n"
                                          + "                             http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\">\n"
                                          + "  <responseDate>";
-
+    
     /**
      * Entry point for handling OAI requests.
      */
@@ -176,7 +176,7 @@ public class ProviderServlet extends HttpServlet {
               || e instanceof BadArgumentException)) doParams = false;
 
         StringBuffer buf = new StringBuffer();
-        buf.append(_XMLSTART);
+        buf.append(xmlProcInst); // _XML_START replaced for stylesheet instruction 
         buf.append(StreamUtil.nowUTCString());
         buf.append("</responseDate>\n");
         buf.append("  <request");
@@ -226,6 +226,34 @@ public class ProviderServlet extends HttpServlet {
     }
 
     private Responder m_responder;
+    private String stylesheetInst = null;
+    private String xmlProcInst = _PROC_INST + _XMLSTART;
+    
+    /**
+     * Method adds Stylesheet Processing Instruction from proai.properties to the xml-response 
+     * @return
+     */
+    private String createProcInst(Properties prop){
+    	if(prop.containsKey("stylesheet.processing")){
+    		stylesheetInst = prop.getProperty("proai.stylesheetProcessing");
+    	}else{
+    		stylesheetInst = null;
+    		logger.info("No Instruction added");
+    	}
+    	return stylesheetInst;
+    }
+    
+    /**
+     * Method adds stylesheet-instruction to the XML-Processing Instructions if available 
+     * @return
+     */
+    private String appendStylesheetInst(){
+    	if(stylesheetInst != null){
+    		xmlProcInst = _PROC_INST + "<?xml-stylesheet type=\"text/xsl\" href=\"" + stylesheetInst + "\" />" + " \n" + _XMLSTART;
+    		logger.info("Added Instruction: " + xmlProcInst);
+    	}
+    	return xmlProcInst;
+    }
 
     public void init() throws ServletException {
         try {
