@@ -23,13 +23,16 @@ public class ProviderServlet extends HttpServlet {
             Logger.getLogger(ProviderServlet.class.getName());
 
     /** Every response starts with this string. */
-    private static final String _XMLSTART = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                                         + "<OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\"\n"
+    private static final String _PROC_INST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    private static final String _XMLSTART = "<OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\"\n"
                                          + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
                                          + "         xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/\n"
                                          + "                             http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\">\n"
                                          + "  <responseDate>";
 
+    private String xmlProcInst = _PROC_INST + _XMLSTART;
+    private String stylesheetLocation = null;
+    
     /**
      * Entry point for handling OAI requests.
      */
@@ -176,7 +179,7 @@ public class ProviderServlet extends HttpServlet {
               || e instanceof BadArgumentException)) doParams = false;
 
         StringBuffer buf = new StringBuffer();
-        buf.append(_XMLSTART);
+        buf.append(appendProcessingInstruction()); // _XML_START replaced for stylesheet instruction 
         buf.append(StreamUtil.nowUTCString());
         buf.append("</responseDate>\n");
         buf.append("  <request");
@@ -226,6 +229,31 @@ public class ProviderServlet extends HttpServlet {
     }
 
     private Responder m_responder;
+    
+    /**
+     * Method adds Stylesheet Location from proai.properties to the xml-response if available 
+     * @return
+     */
+    private void setStylesheetProperty(Properties prop){
+    	if(prop.containsKey("proai.stylesheetLocation")){
+    		stylesheetLocation = prop.getProperty("proai.stylesheetLocation");
+    	}else{
+    		logger.info("No Stylesheet Location given");
+    	}
+    }
+    
+    /**
+     * Method adds Stylesheet Instruction to the XML-Processing Instructions if available 
+     * @return
+     */
+    private String appendProcessingInstruction(){
+    	if(stylesheetLocation != null){
+    		// add Stylesheet Instruction with a relative Location to XML Head
+    		xmlProcInst = _PROC_INST + "<?xml-stylesheet type=\"text/xsl\" href=\"" + stylesheetLocation + "\" ?>" + " \n" + _XMLSTART;
+    		logger.debug("Added Instruction: " + xmlProcInst);
+    	}
+    	return xmlProcInst;
+    }
 
     public void init() throws ServletException {
         try {
@@ -243,6 +271,8 @@ public class ProviderServlet extends HttpServlet {
 
     public void init(Properties props) throws ServerException {
         m_responder = new Responder(props);
+        //add Stylesheet Instruction to XML if configured
+        setStylesheetProperty(props);
     }
 
     /**

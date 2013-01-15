@@ -14,6 +14,14 @@
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 
+  <!-- default mapping to provide the oai2.xsl from inside the container -->
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.xsl</url-pattern>
+  </servlet-mapping>
+
+</web-app>
+
 </web-app>
 
 
