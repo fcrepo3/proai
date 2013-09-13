@@ -13,6 +13,7 @@
     <pathelement location="${lib.dbcp}"/>
     <pathelement location="${lib.collections}"/>
     <pathelement location="${lib.pool}"/>
+	<pathelement location="${lib.joda}"/>
   </path>
 
   <path id="compile.path">
