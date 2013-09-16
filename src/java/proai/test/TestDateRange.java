@@ -9,6 +9,10 @@ import org.junit.Test;
 import proai.service.DateRange;
 import proai.service.DateRangeParseException;
 
+/**
+ * @author Jan Schnasse schnasse@hbz-nrw.de
+ *
+ */
 public class TestDateRange {
 
     @Test
