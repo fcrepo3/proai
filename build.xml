@@ -19,6 +19,7 @@
   <path id="compile.path">
     <path refid="base.path"/>
     <pathelement location="${lib.servlet}"/>
+  	<pathelement location="${lib.hamcrest}"/>
     <pathelement location="${lib.junit}"/>
   </path>
 
@@ -165,7 +166,8 @@
       <test name="proai.test.OAIDriverImplTest"/>
       <test name="proai.test.RecordCacheTest"/> 
       -->
-      <test name="proai.test.ResponderTest"/> 
+      <test name="proai.test.ResponderTest"/>
+      <test name="proai.test.TestDateRange"/> 
     </junit>
   </target>
 

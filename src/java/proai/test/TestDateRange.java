@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import proai.service.DateRange;
+import proai.service.DateRangeParseException;
 
 public class TestDateRange {
 
@@ -166,13 +167,13 @@ public class TestDateRange {
 	DateRange range = DateRange.getRangeExclIncl("2013-06", null);
     }
 
-    @Test(expected = ParseException.class)
+    @Test(expected = DateRangeParseException.class)
     public void testNull3() throws ParseException {
 	DateRange range = DateRange.getRangeExclIncl("2013/06/13",
 		"2013-06-13T09:05Z");
     }
 
-    @Test(expected = ParseException.class)
+    @Test(expected = DateRangeParseException.class)
     public void testNull4() throws ParseException {
 	DateRange nrange = DateRange.getRangeExclIncl("2013-06-13T01",
 		"2013-06-13T09:05Z");
