@@ -251,6 +251,10 @@ public class Responder {
 	}
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> DateHandling
     private ResponseData listRecords(String from, String until,
 	    String metadataPrefix, String set, String resumptionToken,
 	    boolean identifiersOnly, int incompleteListSize)
@@ -458,12 +462,21 @@ public class Responder {
      * Throw a <code>BadArgumentException<code> if <code>metadataPrefix</code>
      * is <code>null</code> or empty.
      */
+<<<<<<< HEAD
     private static void checkMetadataPrefix(String metadataPrefix)
 	    throws BadArgumentException {
 	if (metadataPrefix == null || metadataPrefix.length() == 0) {
 	    throw new BadArgumentException(ERR_MISSING_PREFIX);
 	}
     }
+=======
+    private static void checkMetadataPrefix(String metadataPrefix) throws BadArgumentException {
+        if (metadataPrefix == null || metadataPrefix.length() == 0) {
+            throw new BadArgumentException(ERR_MISSING_PREFIX);
+        }
+    }
+
+>>>>>>> DateHandling
 
     /**
      * Throw an <code>IdDoesNotExistException<code> if the given item does
@@ -477,3 +490,6 @@ public class Responder {
     }
 
 }
+
+
+
