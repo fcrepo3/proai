@@ -39,10 +39,10 @@ public class DateRange {
     public static DateRange getRangeInclIncl(String fromDate, String untilDate)
 
     {
-	if (fromDate.isEmpty()) {
+	if (fromDate == null || fromDate.isEmpty()) {
 	    fromDate = "-9999-01-01";
 	}
-	if (untilDate.isEmpty()) {
+	if (untilDate == null || untilDate.isEmpty()) {
 	    untilDate = "9999-12-31";
 	}
 	if (!validate(fromDate))
@@ -80,10 +80,10 @@ public class DateRange {
      * @return a DateRange
      */
     public static DateRange getRangeInclExcl(String fromDate, String untilDate) {
-	if (fromDate.isEmpty()) {
+	if (fromDate == null || fromDate.isEmpty()) {
 	    fromDate = "-9999-01-01";
 	}
-	if (untilDate.isEmpty()) {
+	if (untilDate == null || untilDate.isEmpty()) {
 	    untilDate = "9999-12-31";
 	}
 	if (!validate(fromDate))
@@ -113,10 +113,10 @@ public class DateRange {
      * @return a DateRange
      */
     public static DateRange getRangeExclIncl(String fromDate, String untilDate) {
-	if (fromDate.isEmpty()) {
+	if (fromDate == null || fromDate.isEmpty()) {
 	    fromDate = "-9999-01-01";
 	}
-	if (untilDate.isEmpty()) {
+	if (untilDate == null || untilDate.isEmpty()) {
 	    untilDate = "9999-12-31";
 	}
 	if (!validate(fromDate))
@@ -146,10 +146,10 @@ public class DateRange {
      * @return a DateRange
      */
     public static DateRange getRangeExclExcl(String fromDate, String untilDate) {
-	if (fromDate.isEmpty()) {
+	if (fromDate == null || fromDate.isEmpty()) {
 	    fromDate = "-9999-01-01";
 	}
-	if (untilDate.isEmpty()) {
+	if (untilDate == null || untilDate.isEmpty()) {
 	    untilDate = "9999-12-31";
 	}
 	if (!validate(fromDate))
