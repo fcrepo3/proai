@@ -190,4 +190,22 @@ public class TestDateRange {
 	String str = range.getFrom();
 	str = range.getUntil();
     }
+    
+    @Test(expected = DateRangeParseException.class)
+    public void testJunk1() throws ParseException {
+	DateRange nrange = DateRange.getRangeExclIncl("",
+		"junk");
+    }
+    
+    @Test(expected = DateRangeParseException.class)
+    public void testJunk2() throws ParseException {
+	DateRange nrange = DateRange.getRangeExclIncl("junk",
+		"");
+    }
+    
+    @Test(expected = DateRangeParseException.class)
+    public void testInvalid() throws ParseException {
+	DateRange nrange = DateRange.getRangeExclIncl("2013-06-13T09:05:00.000Z",
+		"2012-06-13T09:05:00.000Z");
+    }
 }
