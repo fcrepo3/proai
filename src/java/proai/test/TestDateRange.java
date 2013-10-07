@@ -1,6 +1,5 @@
 package proai.test;
 
-import java.text.ParseException;
 import java.util.Date;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,10 +10,12 @@ import proai.service.DateRangeParseException;
  * @author Jan Schnasse schnasse@hbz-nrw.de
  *
  */
+@SuppressWarnings("javadoc")
 public class TestDateRange {
 
+
     @Test
-    public void testInclInclRange() throws ParseException {
+    public void testInclInclRange()  {
 	DateRange range = null;
 
 	range = DateRange.getRangeInclIncl("2013", "2013-06-13T09:05Z");
@@ -87,7 +88,7 @@ public class TestDateRange {
     }
 
     @Test
-    public void testExclInclRange() throws ParseException {
+    public void testExclInclRange() {
 	DateRange range = null;
 
 	range = DateRange.getRangeExclIncl("2013", "2013-06-13T09:05Z");
@@ -160,13 +161,13 @@ public class TestDateRange {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNull1() throws ParseException {
-	DateRange range = DateRange.getRangeExclIncl(null, "2013-06-13T09:05Z");
+    public void testNull1() {
+	DateRange.getRangeExclIncl(null, "2013-06-13T09:05Z");
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNull2() throws ParseException {
-	DateRange range = DateRange.getRangeExclIncl("2013-06", null);
+    public void testNull2()  {
+	DateRange.getRangeExclIncl("2013-06", null);
     }
 
 <<<<<<< HEAD
@@ -174,8 +175,8 @@ public class TestDateRange {
 
 >>>>>>> 016f119... exception handling
     @Test(expected = DateRangeParseException.class)
-    public void testNull3() throws ParseException {
-	DateRange range = DateRange.getRangeExclIncl("2013/06/13",
+    public void testNull3()  {
+	DateRange.getRangeExclIncl("2013/06/13",
 		"2013-06-13T09:05Z");
     }
 
@@ -184,34 +185,34 @@ public class TestDateRange {
 
 >>>>>>> 016f119... exception handling
     @Test(expected = DateRangeParseException.class)
-    public void testNull4() throws ParseException {
-	DateRange nrange = DateRange.getRangeExclIncl("2013-06-13T01",
+    public void testNull4() {
+	DateRange.getRangeExclIncl("2013-06-13T01",
 		"2013-06-13T09:05Z");
     }
 
     @Test(expected = NullPointerException.class)
-    public void testNull5() throws ParseException {
+    public void testNull5() {
 	Date date = null;
 	DateRange range = DateRange.getRangeExclIncl(date, date);
-	String str = range.getFrom();
-	str = range.getUntil();
+	range.getFrom();
+	range.getUntil();
     }
     
     @Test(expected = DateRangeParseException.class)
-    public void testJunk1() throws ParseException {
-	DateRange nrange = DateRange.getRangeExclIncl("",
+    public void testJunk1() {
+	DateRange.getRangeExclIncl("",
 		"junk");
     }
     
     @Test(expected = DateRangeParseException.class)
-    public void testJunk2() throws ParseException {
-	DateRange nrange = DateRange.getRangeExclIncl("junk",
+    public void testJunk2() {
+	DateRange.getRangeExclIncl("junk",
 		"");
     }
     
     @Test(expected = DateRangeParseException.class)
-    public void testInvalid() throws ParseException {
-	DateRange nrange = DateRange.getRangeExclIncl("2013-06-13T09:05:00.000Z",
+    public void testInvalid(){
+	DateRange.getRangeExclIncl("2013-06-13T09:05:00.000Z",
 		"2012-06-13T09:05:00.000Z");
     }
 }
