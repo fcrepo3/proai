@@ -160,12 +160,12 @@ public class TestDateRange {
 	Assert.assertEquals("2014-01-01T00:00:00.000Z", range.getUntil());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNull1() {
 	DateRange.getRangeExclIncl(null, "2013-06-13T09:05Z");
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNull2()  {
 	DateRange.getRangeExclIncl("2013-06", null);
     }
@@ -190,7 +190,7 @@ public class TestDateRange {
 		"2013-06-13T09:05Z");
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNull5() {
 	Date date = null;
 	DateRange range = DateRange.getRangeExclIncl(date, date);
@@ -215,4 +215,11 @@ public class TestDateRange {
 	DateRange.getRangeExclIncl("2013-06-13T09:05:00.000Z",
 		"2012-06-13T09:05:00.000Z");
     }
+    
+    @Test
+    public void testDifferentGranularities(){
+	DateRange.getRangeInclIncl("2002-02-05",
+		"2007-09-22T19:04:34Z");
+    }
+    
 }
