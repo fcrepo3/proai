@@ -2,21 +2,15 @@ package proai.test;
 
 import java.text.ParseException;
 import java.util.Date;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import proai.service.DateRange;
-<<<<<<< HEAD
-
-=======
 import proai.service.DateRangeParseException;
 
 /**
  * @author Jan Schnasse schnasse@hbz-nrw.de
  *
  */
->>>>>>> DateHandling
 public class TestDateRange {
 
     @Test
@@ -175,21 +169,15 @@ public class TestDateRange {
 	DateRange range = DateRange.getRangeExclIncl("2013-06", null);
     }
 
-<<<<<<< HEAD
-    @Test(expected = ParseException.class)
-=======
+
     @Test(expected = DateRangeParseException.class)
->>>>>>> DateHandling
     public void testNull3() throws ParseException {
 	DateRange range = DateRange.getRangeExclIncl("2013/06/13",
 		"2013-06-13T09:05Z");
     }
 
-<<<<<<< HEAD
-    @Test(expected = ParseException.class)
-=======
+
     @Test(expected = DateRangeParseException.class)
->>>>>>> DateHandling
     public void testNull4() throws ParseException {
 	DateRange nrange = DateRange.getRangeExclIncl("2013-06-13T01",
 		"2013-06-13T09:05Z");
