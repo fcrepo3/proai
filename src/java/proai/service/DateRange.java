@@ -40,10 +40,10 @@ public class DateRange {
 
     {
 	if (fromDate == null || fromDate.isEmpty()) {
-	    fromDate = "-9999-01-01";
+	    fromDate = null;
 	}
 	if (untilDate == null || untilDate.isEmpty()) {
-	    untilDate = "9999-12-31";
+	    untilDate = null;
 	}
 	if (!validate(fromDate))
 	    throw new DateRangeParseException("\"" + fromDate
@@ -63,6 +63,9 @@ public class DateRange {
     }
 
     private static boolean fromIsAfterUntil(String fromDate, String untilDate) {
+	if(untilDate == null) return false;
+	if(fromDate == null) return false;
+	
 	Date from =  iso8601ToDate(fromDate);
 	Date until = iso8601ToDate(untilDate);
 	
@@ -81,10 +84,10 @@ public class DateRange {
      */
     public static DateRange getRangeInclExcl(String fromDate, String untilDate) {
 	if (fromDate == null || fromDate.isEmpty()) {
-	    fromDate = "-9999-01-01";
+	    fromDate = null;
 	}
 	if (untilDate == null || untilDate.isEmpty()) {
-	    untilDate = "9999-12-31";
+	    untilDate = null;
 	}
 	if (!validate(fromDate))
 	    throw new DateRangeParseException(fromDate
@@ -114,10 +117,10 @@ public class DateRange {
      */
     public static DateRange getRangeExclIncl(String fromDate, String untilDate) {
 	if (fromDate == null || fromDate.isEmpty()) {
-	    fromDate = "-9999-01-01";
+	    fromDate = null;
 	}
 	if (untilDate == null || untilDate.isEmpty()) {
-	    untilDate = "9999-12-31";
+	    untilDate = null;
 	}
 	if (!validate(fromDate))
 	    throw new DateRangeParseException(fromDate
@@ -147,10 +150,10 @@ public class DateRange {
      */
     public static DateRange getRangeExclExcl(String fromDate, String untilDate) {
 	if (fromDate == null || fromDate.isEmpty()) {
-	    fromDate = "-9999-01-01";
+	    fromDate = null;
 	}
 	if (untilDate == null || untilDate.isEmpty()) {
-	    untilDate = "9999-12-31";
+	    untilDate = null;
 	}
 	if (!validate(fromDate))
 	    throw new DateRangeParseException(fromDate
@@ -258,6 +261,7 @@ public class DateRange {
      */
     public static String increment(final String date) {
 
+	if(date==null)return null;
 	try {
 	    int len = date.length();
 	    DateTime incDate = new DateTime(iso8601ToDate(date));
@@ -292,6 +296,7 @@ public class DateRange {
      * @return a iso8601 String decremented by 1 unit.
      */
     public static String decrement(final String date) {
+	if(date==null)return null;
 	try {
 	    DateTime decDate = new DateTime(iso8601ToDate(date));
 	    decDate = decDate.minusMillis(1);
@@ -315,6 +320,10 @@ public class DateRange {
      *         granularity as the likeExpected string.
      */
     public static String unify(final String unifyMe, final String likeExpected) {
+	
+	if(unifyMe==null)return null;
+	if(likeExpected == null) return unifyMe;
+	
 	String str = unifyMe;
 	if (str.length() >= likeExpected.length())
 	    return str;
@@ -349,6 +358,7 @@ public class DateRange {
      * @return true if this class can handle the string, false if not.
      */
     public static boolean validate(String date) {
+	if(date==null) return true;
 	String pattern = "^(-?(?:[1-9][0-9]*)?[0-9]{4})(-(1[0-2]|0[1-9]))?(-(3[0-1]|0[1-9]|[1-2][0-9]))?(T(2[0-3]|[0-1][0-9])(:([0-5][0-9])(:([0-5][0-9]))?((\\.[0-9]+))?)?Z)?";
 	return date.matches(pattern);
     }
