@@ -241,17 +241,19 @@ public class Responder {
 	    throws BadArgumentException, BadResumptionTokenException,
 	    CannotDisseminateFormatException, NoRecordsMatchException,
 	    NoSetHierarchyException, ServerException {
-	System.out.println("From " + from + " Until " + until);
 	if (resumptionToken == null) {
-
 	    Date fromDate = null;
 	    Date untilDate = null;
 	    try {
 		DateRange range = DateRange.getRangeInclIncl(from, until);
-		untilDate = range.iso8601ToDate(range.until);
-		fromDate = range.iso8601ToDate(range.from);
-	    } catch (Exception e) {
-		logger.info(e);
+		untilDate = DateRange.iso8601ToDate(range.until);
+		fromDate = DateRange.iso8601ToDate(range.from);
+	    } catch (DateRangeParseException e) {
+		throw new BadArgumentException(e.getLocalizedMessage(),e);
+	    }
+	    catch(Exception e)
+	    {
+		logger.debug(e);
 	    }
 	    // checkGranularity(from, until);
 	    // checkFromUntil(fromDate, untilDate);
