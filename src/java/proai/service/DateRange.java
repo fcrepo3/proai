@@ -51,12 +51,22 @@ public class DateRange {
 	if (!validate(untilDate))
 	    throw new DateRangeParseException(untilDate
 		    + " is not a valid ISO8601 string.");
+	if(fromIsAfterUntil(fromDate,untilDate))
+	    throw new DateRangeParseException(untilDate
+		    + " (until) is before " + fromDate + "(from). Must result in empty response!");
 
 	fromDate = decrement(fromDate);
 	untilDate = increment(untilDate);
 	fromDate = unify(fromDate, untilDate);
 	untilDate = unify(untilDate, fromDate);
 	return new DateRange(fromDate, untilDate);
+    }
+
+    private static boolean fromIsAfterUntil(String fromDate, String untilDate) {
+	Date from =  iso8601ToDate(fromDate);
+	Date until = iso8601ToDate(untilDate);
+	
+	return from.after(until);
     }
 
     /**
@@ -82,6 +92,9 @@ public class DateRange {
 	if (!validate(untilDate))
 	    throw new DateRangeParseException(untilDate
 		    + " is not a valid ISO8601 string.");
+	if(fromIsAfterUntil(fromDate,untilDate))
+	    throw new DateRangeParseException(untilDate
+		    + " (until) is before " + fromDate + "(from). Must result in empty response!");
 
 	fromDate = decrement(fromDate);
 	fromDate = unify(fromDate, untilDate);
@@ -112,6 +125,9 @@ public class DateRange {
 	if (!validate(untilDate))
 	    throw new DateRangeParseException(untilDate
 		    + " is not a valid ISO8601 string.");
+	if(fromIsAfterUntil(fromDate,untilDate))
+	    throw new DateRangeParseException(untilDate
+		    + " (until) is before " + fromDate + "(from). Must result in empty response!");
 
 	untilDate = increment(untilDate);
 	fromDate = unify(fromDate, untilDate);
@@ -142,6 +158,9 @@ public class DateRange {
 	if (!validate(untilDate))
 	    throw new DateRangeParseException(untilDate
 		    + " is not a valid ISO8601 string.");
+	if(fromIsAfterUntil(fromDate,untilDate))
+	    throw new DateRangeParseException(untilDate
+		    + " (until) is before " + fromDate + "(from). Must result in empty response!");
 
 	fromDate = unify(fromDate, untilDate);
 	untilDate = unify(untilDate, fromDate);
