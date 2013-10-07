@@ -170,20 +170,13 @@ public class TestDateRange {
 	DateRange.getRangeExclIncl("2013-06", null);
     }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 016f119... exception handling
     @Test(expected = DateRangeParseException.class)
     public void testNull3()  {
 	DateRange.getRangeExclIncl("2013/06/13",
 		"2013-06-13T09:05Z");
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 016f119... exception handling
     @Test(expected = DateRangeParseException.class)
     public void testNull4() {
 	DateRange.getRangeExclIncl("2013-06-13T01",
