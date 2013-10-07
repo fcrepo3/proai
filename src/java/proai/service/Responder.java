@@ -230,41 +230,41 @@ public class Responder {
         }
     }
 
-    private ResponseData listRecords(String from,
-                                     String until,
-                                     String metadataPrefix,
-                                     String set,
-                                     String resumptionToken,
-                                     boolean identifiersOnly,
-                                     int incompleteListSize)
-            throws BadArgumentException,
-                   BadResumptionTokenException,
-                   CannotDisseminateFormatException,
-                   NoRecordsMatchException,
-                   NoSetHierarchyException,
-                   ServerException {
 
-        if (resumptionToken == null) {
-
-            Date fromDate = validDate(from);
-            Date untilDate = validDate(until);
-            checkGranularity(from, until);
-            checkFromUntil(fromDate, untilDate);
-            checkMetadataPrefix(metadataPrefix);
-            ListProvider<CachedContent> provider = new RecordListProvider(m_cache,
-                                                           incompleteListSize,
-                                                           identifiersOnly,
-                                                           fromDate,
-                                                           untilDate,
-                                                           metadataPrefix,
-                                                           set);
-            return m_sessionManager.list(provider);
-        } else {
-            if (from != null || until != null || metadataPrefix != null || set != null) {
-                throw new BadArgumentException(ERR_RESUMPTION_EXCLUSIVE);
-            }
-            return m_sessionManager.getResponseData(resumptionToken);
-        }
+    private ResponseData listRecords(String from, String until,
+	    String metadataPrefix, String set, String resumptionToken,
+	    boolean identifiersOnly, int incompleteListSize)
+	    throws BadArgumentException, BadResumptionTokenException,
+	    CannotDisseminateFormatException, NoRecordsMatchException,
+	    NoSetHierarchyException, ServerException {
+	if (resumptionToken == null) {
+	    Date fromDate = null;
+	    Date untilDate = null;
+	    try {
+		DateRange range = DateRange.getRangeInclIncl(from, until);
+		untilDate = DateRange.iso8601ToDate(range.until);
+		fromDate = DateRange.iso8601ToDate(range.from);
+	    } catch (DateRangeParseException e) {
+		throw new BadArgumentException(e.getLocalizedMessage(),e);
+	    }
+	    catch(Exception e)
+	    {
+		logger.debug(e);
+	    }
+	    // checkGranularity(from, until);
+	    // checkFromUntil(fromDate, untilDate);
+	    checkMetadataPrefix(metadataPrefix);
+	    ListProvider<CachedContent> provider = new RecordListProvider(
+		    m_cache, incompleteListSize, identifiersOnly, fromDate,
+		    untilDate, metadataPrefix, set);
+	    return m_sessionManager.list(provider);
+	} else {
+	    if (from != null || until != null || metadataPrefix != null
+		    || set != null) {
+		throw new BadArgumentException(ERR_RESUMPTION_EXCLUSIVE);
+	    }
+	    return m_sessionManager.getResponseData(resumptionToken);
+	}
     }
 
     /**
@@ -438,57 +438,7 @@ public class Responder {
         }
     }
 
-    /**
-     * Parse and return a <code>Date</code> for the given string, or return
-     * <code>null</code> if the string is <code>null</code>.
-     *
-     * Validation ensures that the string is in one of the two formats
-     * recognized by the protocol.
-     */
-    private static Date validDate(String dateString) throws BadArgumentException {
-        if (dateString == null) return null; 
-        DateFormat parser;
-        if (dateString.length() == 10) {
-            parser = new SimpleDateFormat("yyyy-MM-dd");
-        } else {
-            parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        }
-        try {
-            return parser.parse(dateString);
-        } catch (Exception e) {
-            throw new BadArgumentException(ERR_DATE_FORMAT);
-        }
-    }
 
-    /**
-     * Checks that the granularity of the from and until arguments match.
-     */
-    private static void checkGranularity(String from, String until)
-            throws BadArgumentException {
-        if (from!= null && until!=null) {
-            if ( ( (from.endsWith("Z")) 
-                    && (!until.endsWith("Z")) )
-                    || ( (until.endsWith("Z"))
-                    && (!from.endsWith("Z")) ) ) {
-                throw new BadArgumentException("Date granularities of from and "
-                        + "until arguments do not match.");
-            }
-        }
-    }
-
-    /**
-     * If <code>from</code> is later than <code>until</code>, throw a
-     * <code>BadArgumentException</code>.
-     *
-     * If either is <code>null</code>, no exception will be thrown.
-     */
-    private static void checkFromUntil(Date from, Date until) throws BadArgumentException {
-        if (from != null 
-                && until != null
-                && from.getTime() > until.getTime()) {
-            throw new BadArgumentException(ERR_FROM_UNTIL);
-        }
-    }
 
     /**
      * Throw an <code>IdDoesNotExistException<code> if the given item does
@@ -503,3 +453,6 @@ public class Responder {
     }
 
 }
+
+
+
