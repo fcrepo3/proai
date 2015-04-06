@@ -1,20 +1,21 @@
 package proai.cache;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
 import proai.Record;
 import proai.error.ServerException;
 import proai.util.StreamUtil;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class ParsedRecord extends DefaultHandler implements Record {
 
@@ -31,14 +32,14 @@ public class ParsedRecord extends DefaultHandler implements Record {
 
     private SimpleDateFormat m_formatter1;
     private SimpleDateFormat m_formatter2;
-    
+
     private boolean m_inDatestamp;
     private boolean m_inSetSpec;
     private boolean m_finishedParsing;
     private StringBuffer m_buf = null;
 
-    public ParsedRecord(String itemID, 
-                        String prefix, 
+    public ParsedRecord(String itemID,
+                        String prefix,
                         String sourceInfo,
                         File file) throws ServerException {
         m_itemID = itemID;
@@ -65,15 +66,16 @@ public class ParsedRecord extends DefaultHandler implements Record {
                 try {
                     String xml = StreamUtil.getString(new FileInputStream(file), "UTF-8");
                     _LOG.debug("Error parsing record xml: #BEGIN-XML#" + xml + "#END-XML#");
-                } catch (Exception ex) { }
+                } catch (Exception ex) {
+                }
             }
             throw new ServerException("Error parsing record xml", e);
         }
     }
 
-    public void startElement(String uri, 
-                             String localName, 
-                             String qName, 
+    public void startElement(String uri,
+                             String localName,
+                             String qName,
                              Attributes a) throws SAXException {
         if (!m_finishedParsing) {
             if (qName.equals("datestamp")) {
@@ -82,14 +84,6 @@ public class ParsedRecord extends DefaultHandler implements Record {
             } else if (qName.equals("setSpec")) {
                 m_inSetSpec = true;
                 m_buf = new StringBuffer();
-            }
-        }
-    }
-
-    public void characters(char[] ch, int start, int length) throws SAXException {
-        if (!m_finishedParsing) {
-            if (m_inDatestamp || m_inSetSpec) {
-                m_buf.append(ch, start, length);
             }
         }
     }
@@ -124,6 +118,14 @@ public class ParsedRecord extends DefaultHandler implements Record {
                     m_setSpecs.add(m_buf.toString().trim());
                 }
                 m_inSetSpec = false;
+            }
+        }
+    }
+
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        if (!m_finishedParsing) {
+            if (m_inDatestamp || m_inSetSpec) {
+                m_buf.append(ch, start, length);
             }
         }
     }

@@ -1,14 +1,13 @@
 package proai.cache;
 
-import java.io.*;
-import java.util.*;
-
 import net.sf.bvalid.Validator;
-
 import org.apache.log4j.Logger;
-
 import proai.driver.OAIDriver;
 import proai.util.StreamUtil;
+
+import java.io.*;
+import java.util.Iterator;
+import java.util.List;
 
 public class Worker extends Thread {
 
@@ -24,10 +23,10 @@ public class Worker extends Thread {
     private long _totalFetchTime;
     private long _totalValidationTime;
 
-    public Worker(int num, 
-                  int of, 
-                  Updater updater, 
-                  OAIDriver driver, 
+    public Worker(int num,
+                  int of,
+                  Updater updater,
+                  OAIDriver driver,
                   RCDisk disk,
                   Validator validator) {
         super("Worker-" + num + "of" + of);
@@ -61,25 +60,6 @@ public class Worker extends Thread {
         _LOG.info("Worker finished");
     }
 
-    private InputStream getRecordStreamForValidation(File recordFile) throws Exception {
-        StringBuilder builder = new StringBuilder();
-        builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        builder.append("<OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\">\n");
-        builder.append("<responseDate>2002-02-08T08:55:46Z</responseDate>\n");
-        builder.append("<request verb=\"GetRecord\" identifier=\"oai:arXiv.org:cs/0112017\" ");
-        builder.append("metadataPrefix=\"oai_dc\">http://arXiv.org/oai2</request>\n");
-        builder.append("<GetRecord>\n"); 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(recordFile)));
-        String line = reader.readLine();
-        while (line != null) {
-            builder.append(line + "\n");
-            line = reader.readLine();
-        }
-        builder.append("</GetRecord>\n"); 
-        builder.append("</OAI-PMH>"); 
-        return new ByteArrayInputStream(builder.toString().getBytes("UTF-8"));
-    }
-
     private void attempt(QueueItem qi) {
 
         RCDiskWriter diskWriter = null;
@@ -91,9 +71,9 @@ public class Worker extends Thread {
 
             long startFetchTime = System.currentTimeMillis();
             _driver.writeRecordXML(qi.getIdentifier(),
-                                   qi.getMDPrefix(),
-                                   qi.getSourceInfo(), 
-                                   diskWriter);
+                    qi.getMDPrefix(),
+                    qi.getSourceInfo(),
+                    diskWriter);
             diskWriter.flush();
             diskWriter.close();
 
@@ -102,16 +82,16 @@ public class Worker extends Thread {
             retrievalDelay = endFetchTime - startFetchTime;
 
             if (_validator != null) {
-                
+
                 _validator.validate(getRecordStreamForValidation(diskWriter.getFile()),
-                                    RecordCache.OAI_RECORD_SCHEMA_URL);
+                        RecordCache.OAI_RECORD_SCHEMA_URL);
                 validationDelay = System.currentTimeMillis() - endFetchTime;
             }
-            
+
             qi.setParsedRecord(new ParsedRecord(qi.getIdentifier(),
-                                                qi.getMDPrefix(),
-                                                diskWriter.getPath(),
-                                                diskWriter.getFile()));
+                    qi.getMDPrefix(),
+                    diskWriter.getPath(),
+                    diskWriter.getFile()));
 
             qi.setSucceeded(true);
 
@@ -136,6 +116,25 @@ public class Worker extends Thread {
             _totalFetchTime += retrievalDelay;
             _totalValidationTime += validationDelay;
         }
+    }
+
+    private InputStream getRecordStreamForValidation(File recordFile) throws Exception {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        builder.append("<OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\">\n");
+        builder.append("<responseDate>2002-02-08T08:55:46Z</responseDate>\n");
+        builder.append("<request verb=\"GetRecord\" identifier=\"oai:arXiv.org:cs/0112017\" ");
+        builder.append("metadataPrefix=\"oai_dc\">http://arXiv.org/oai2</request>\n");
+        builder.append("<GetRecord>\n");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(recordFile)));
+        String line = reader.readLine();
+        while (line != null) {
+            builder.append(line + "\n");
+            line = reader.readLine();
+        }
+        builder.append("</GetRecord>\n");
+        builder.append("</OAI-PMH>");
+        return new ByteArrayInputStream(builder.toString().getBytes("UTF-8"));
     }
 
     public int getAttemptedCount() {

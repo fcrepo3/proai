@@ -13,10 +13,10 @@ public class QueueItem {
     private String _failDate;
     private ParsedRecord _rec;
 
-    public QueueItem(int queueKey, 
-                     String identifier, 
-                     String mdPrefix, 
-                     String sourceInfo, 
+    public QueueItem(int queueKey,
+                     String identifier,
+                     String mdPrefix,
+                     String sourceInfo,
                      char queueSource) {
         _queueKey = queueKey;
         _identifier = identifier;
@@ -25,11 +25,25 @@ public class QueueItem {
         _queueSource = queueSource;
     }
 
-    public int getQueueKey() { return _queueKey; }
-    public String getIdentifier() { return _identifier; }
-    public String getMDPrefix() { return _mdPrefix; }
-    public String getSourceInfo() { return _sourceInfo; }
-    public char getQueueSource() { return _queueSource; }
+    public int getQueueKey() {
+        return _queueKey;
+    }
+
+    public String getIdentifier() {
+        return _identifier;
+    }
+
+    public String getMDPrefix() {
+        return _mdPrefix;
+    }
+
+    public String getSourceInfo() {
+        return _sourceInfo;
+    }
+
+    public char getQueueSource() {
+        return _queueSource;
+    }
 
     public boolean succeeded() {
         return _succeeded;
@@ -56,7 +70,7 @@ public class QueueItem {
     }
 
     public ParsedRecord getParsedRecord() {
-            return _rec;
+        return _rec;
     }
 
     public void setParsedRecord(ParsedRecord rec) {

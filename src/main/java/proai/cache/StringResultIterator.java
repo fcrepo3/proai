@@ -1,27 +1,22 @@
 package proai.cache;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
-
 import org.apache.log4j.Logger;
-
 import proai.CloseableIterator;
 import proai.error.ServerException;
+
+import java.sql.*;
+import java.text.SimpleDateFormat;
 
 /**
  * An iterator around a database <code>ResultSet</code> that provides
  * a <code>String[]</code> for each row.
- *
- * Rows in the result set contain two values.  The first value is a 
+ * <p/>
+ * Rows in the result set contain two values.  The first value is a
  * <code>String</code> representing a relative filesystem path.  The second
  * value is a <code>long</code> representing a date.
- *
+ * <p/>
  * The returned <code>String[]</code> for each row will have two parts:
- * The first is the relative filesystem path and the second is an 
+ * The first is the relative filesystem path and the second is an
  * ISO8601-formatted date (second precision).
  */
 public class StringResultIterator implements CloseableIterator<String[]> {
@@ -50,16 +45,6 @@ public class StringResultIterator implements CloseableIterator<String[]> {
         m_nextStringArray = getNext();
     }
 
-    public boolean hasNext() {
-        return m_nextStringArray != null;
-    }
-
-    public String[] next() throws ServerException {
-        String[] next = m_nextStringArray;
-        m_nextStringArray = getNext();
-        return next;
-    }
-
     private String[] getNext() throws ServerException {
         if (m_exhausted) return null;
         try {
@@ -84,10 +69,32 @@ public class StringResultIterator implements CloseableIterator<String[]> {
         }
     }
 
+    public boolean hasNext() {
+        return m_nextStringArray != null;
+    }
+
+    public String[] next() throws ServerException {
+        String[] next = m_nextStringArray;
+        m_nextStringArray = getNext();
+        return next;
+    }
+
+    public void remove() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("StringResultIterator does not support remove().");
+    }
+
     public void close() {
         if (!m_closed) {
-            if (m_rs != null) try { m_rs.close(); m_rs = null; } catch (Exception e) { }
-            if (m_stmt != null) try { m_stmt.close(); m_stmt = null; } catch (Exception e) { }
+            if (m_rs != null) try {
+                m_rs.close();
+                m_rs = null;
+            } catch (Exception e) {
+            }
+            if (m_stmt != null) try {
+                m_stmt.close();
+                m_stmt = null;
+            } catch (Exception e) {
+            }
             RecordCache.releaseConnection(m_conn);
 
             // gc and print memory stats when we're done with the
@@ -98,7 +105,7 @@ public class StringResultIterator implements CloseableIterator<String[]> {
             long ms = System.currentTimeMillis() - startTime;
             long currentFreeBytes = Runtime.getRuntime().freeMemory();
             logger.info("GC ran in " + ms + "ms and free memory "
-                    + "went from " + startFreeBytes + " to " 
+                    + "went from " + startFreeBytes + " to "
                     + currentFreeBytes + " bytes.");
 
             m_closed = true;
@@ -106,13 +113,8 @@ public class StringResultIterator implements CloseableIterator<String[]> {
         }
     }
 
-
     public void finalize() {
         close();
-    }
-
-    public void remove() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("StringResultIterator does not support remove().");
     }
 
 }

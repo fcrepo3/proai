@@ -1,6 +1,8 @@
 package proai.util;
 
-import java.sql.*;
+import java.sql.Clob;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public abstract class DBUtil {
 
@@ -25,7 +27,7 @@ public abstract class DBUtil {
         }
     }
 
-    public static String quotedString(String in, 
+    public static String quotedString(String in,
                                       boolean backslashIsEscape) {
         StringBuffer out = new StringBuffer();
         out.append('\'');

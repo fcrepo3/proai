@@ -21,6 +21,10 @@ public class CachedRecordContentIterator implements CloseableIterator<CachedCont
         m_closed = false;
     }
 
+    public void finalize() {
+        close();
+    }
+
     public boolean hasNext() throws ServerException {
         return m_arrays.hasNext();
     }
@@ -43,9 +47,6 @@ public class CachedRecordContentIterator implements CloseableIterator<CachedCont
         }
     }
 
-    public void finalize() {
-        close();
-    }
 
     public void remove() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("CachedRecordContentIterator does not support remove().");

@@ -1,30 +1,21 @@
 package proai.service;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.log4j.Logger;
-
 import proai.error.BadResumptionTokenException;
 import proai.error.ServerException;
 
-public class SessionManager extends Thread {
+import java.io.File;
+import java.util.*;
 
-    private static final Logger logger =
-            Logger.getLogger(SessionManager.class.getName());
+public class SessionManager extends Thread {
 
     public static final String PROP_BASEDIR = "proai.sessionBaseDir";
     public static final String PROP_SECONDSBETWEENREQUESTS = "proai.secondsBetweenRequests";
-
     public static final String ERR_RESUMPTION_SYNTAX_SLASH = "bad syntax in resumption token: must contain exactly one slash";
     public static final String ERR_RESUMPTION_SYNTAX_INTEGER = "bad syntax in resumption token: expected an integer after the slash";
     public static final String ERR_RESUMPTION_SESSION = "bad session id or session expired";
-
+    private static final Logger logger =
+            Logger.getLogger(SessionManager.class.getName());
     private File m_baseDir;
     private int m_secondsBetweenRequests;
 
@@ -46,10 +37,6 @@ public class SessionManager extends Thread {
         init(new File(dir), secondsBetweenRequests);
     }
 
-    public SessionManager(File baseDir, int secondsBetweenRequests) {
-        init(baseDir, secondsBetweenRequests);
-    }
-
     private void init(File baseDir, int secondsBetweenRequests) throws ServerException {
         m_baseDir = baseDir;
         m_baseDir.mkdirs();
@@ -57,7 +44,10 @@ public class SessionManager extends Thread {
         if (dirs == null) throw new ServerException("Unable to create session directory: " + m_baseDir.getPath());
         if (dirs.length > 0) {
             logger.info("Cleaning up " + dirs.length + " sessions from last run...");
-            try { Thread.sleep(4000); } catch (Exception e) { }
+            try {
+                Thread.sleep(4000);
+            } catch (Exception e) {
+            }
             for (int i = 0; i < dirs.length; i++) {
                 if (dirs[i].isDirectory()) {
                     File[] files = dirs[i].listFiles();
@@ -73,6 +63,10 @@ public class SessionManager extends Thread {
         m_sessions = new HashMap<String, Session>();
         setName("Session-Reaper");
         start();
+    }
+
+    public SessionManager(File baseDir, int secondsBetweenRequests) {
+        init(baseDir, secondsBetweenRequests);
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -91,7 +85,10 @@ public class SessionManager extends Thread {
             int c = 0;
             while (c < 20 && !m_threadNeedsToFinish) {
                 c++;
-                try { Thread.sleep(250); } catch (Exception e) { }
+                try {
+                    Thread.sleep(250);
+                } catch (Exception e) {
+                }
             }
 
         }
@@ -157,13 +154,13 @@ public class SessionManager extends Thread {
 
     /**
      * Get response data from the appropriate session and return it.
-     *
+     * <p/>
      * The resumption token encodes the session id and part number.
      * The first part is sessionid/0, the second part is sessionid/1, and so on.
      */
-    public ResponseData getResponseData(String resumptionToken) 
+    public ResponseData getResponseData(String resumptionToken)
             throws BadResumptionTokenException,
-                   ServerException {
+            ServerException {
         String[] s = resumptionToken.split("/");
         if (s.length != 2) {
             throw new BadResumptionTokenException(ERR_RESUMPTION_SYNTAX_SLASH);
@@ -186,16 +183,19 @@ public class SessionManager extends Thread {
 
     /////////////////////////////////////////////////////////////////////////
 
+    public void finalize() {
+        close();
+    }
+
     public void close() {
         m_threadNeedsToFinish = true;
         while (!m_threadFinished) {
-            try { Thread.sleep(250); } catch (Exception e) { }
+            try {
+                Thread.sleep(250);
+            } catch (Exception e) {
+            }
         }
         cleanupSessions(true);
-    }
-
-    public void finalize() {
-        close();
     }
 
 }

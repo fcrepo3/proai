@@ -1,8 +1,8 @@
 package proai.error;
 
 public class BadResumptionTokenException extends ProtocolException {
-	static final long serialVersionUID = 1;
-	
+    static final long serialVersionUID = 1;
+
     public BadResumptionTokenException() {
         super("The value of the resumptionToken argument is invalid or expired.");
     }
@@ -12,10 +12,12 @@ public class BadResumptionTokenException extends ProtocolException {
     }
 
     public BadResumptionTokenException(String message,
-                             Throwable cause) {
+                                       Throwable cause) {
         super(message, cause);
     }
 
-    public String getCode() { return "badResumptionToken"; }
+    public String getCode() {
+        return "badResumptionToken";
+    }
 
 }

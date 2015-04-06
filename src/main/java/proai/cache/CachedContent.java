@@ -1,13 +1,9 @@
 package proai.cache;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-
 import proai.Writable;
 import proai.error.ServerException;
+
+import java.io.*;
 
 public class CachedContent implements Writable {
 
@@ -38,8 +34,8 @@ public class CachedContent implements Writable {
                 BufferedReader reader = null;
                 try {
                     reader = new BufferedReader(
-                                 new InputStreamReader(
-                                     new FileInputStream(m_file), "UTF-8"));
+                            new InputStreamReader(
+                                    new FileInputStream(m_file), "UTF-8"));
                     String line = reader.readLine();
                     while (line != null) {
                         out.println(line);
@@ -48,7 +44,10 @@ public class CachedContent implements Writable {
                 } catch (Exception e) {
                     throw new ServerException("Error reading from file: " + m_file.getPath(), e);
                 } finally {
-                    if (reader != null) try { reader.close(); } catch (Exception e) { }
+                    if (reader != null) try {
+                        reader.close();
+                    } catch (Exception e) {
+                    }
                 }
             } else {
                 // need to read the file while changing the <datestamp>,
@@ -64,8 +63,8 @@ public class CachedContent implements Writable {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(
-                         new InputStreamReader(
-                             new FileInputStream(m_file), "UTF-8"));
+                    new InputStreamReader(
+                            new FileInputStream(m_file), "UTF-8"));
             StringBuffer upToHeaderEnd = new StringBuffer();
             String line = reader.readLine();
             boolean sawHeaderEnd = false;
@@ -98,7 +97,10 @@ public class CachedContent implements Writable {
         } catch (Exception e) {
             throw new ServerException("Error reading/transforming file: " + m_file.getPath(), e);
         } finally {
-            if (reader != null) try { reader.close(); } catch (Exception e) { }
+            if (reader != null) try {
+                reader.close();
+            } catch (Exception e) {
+            }
         }
 
     }

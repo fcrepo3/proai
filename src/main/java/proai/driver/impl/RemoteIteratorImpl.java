@@ -1,8 +1,8 @@
 package proai.driver.impl;
 
-import java.util.Iterator;
-
 import proai.driver.RemoteIterator;
+
+import java.util.Iterator;
 
 public class RemoteIteratorImpl<T> implements RemoteIterator<T> {
 
@@ -20,12 +20,12 @@ public class RemoteIteratorImpl<T> implements RemoteIterator<T> {
         return m_iter.next();
     }
 
-    public void close() {
-        // do nothing (this impl is based on a non-closable iterator)
-    }
-
     public void remove() {
         throw new UnsupportedOperationException("RemoteIterator does support remove().");
+    }
+
+    public void close() {
+        // do nothing (this impl is based on a non-closable iterator)
     }
 
 }

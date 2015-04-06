@@ -1,6 +1,7 @@
 package proai.service;
 
-import proai.error.*;
+import proai.error.BadResumptionTokenException;
+import proai.error.ServerException;
 
 public interface Session {
 
@@ -17,7 +18,7 @@ public interface Session {
     /**
      * Get the indicated response part (starting with zero).
      */
-    public ResponseData getResponseData(int partNum) throws ServerException, 
-                                                            BadResumptionTokenException;
+    public ResponseData getResponseData(int partNum) throws ServerException,
+            BadResumptionTokenException;
 
 }

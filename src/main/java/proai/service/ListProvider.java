@@ -1,8 +1,8 @@
 package proai.service;
 
-import proai.*;
-import proai.cache.*;
-import proai.error.*;
+import proai.CloseableIterator;
+import proai.cache.RecordCache;
+import proai.error.ServerException;
 
 public interface ListProvider<T> {
 

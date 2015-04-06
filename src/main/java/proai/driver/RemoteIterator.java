@@ -9,7 +9,7 @@ public interface RemoteIterator<T> extends CloseableIterator<T> {
 
     public T next() throws RepositoryException;
 
-    public void close() throws RepositoryException;
-
     public void remove() throws UnsupportedOperationException;
+
+    public void close() throws RepositoryException;
 }

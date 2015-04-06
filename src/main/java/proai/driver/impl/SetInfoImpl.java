@@ -1,10 +1,10 @@
 package proai.driver.impl;
 
-import java.io.File;
-import java.io.PrintWriter;
-
 import proai.SetInfo;
 import proai.error.RepositoryException;
+
+import java.io.File;
+import java.io.PrintWriter;
 
 public class SetInfoImpl implements SetInfo {
 

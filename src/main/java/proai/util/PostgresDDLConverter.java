@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * This class is based on Hubert Stigler's contribution to the
  * fedora-users mailing list on April 4th, 2006.
- *
+ * <p/>
  * It has been modified to create indexes.
  *
  * @author hubert.stigler@uni-graz.at
@@ -22,38 +22,31 @@ public class PostgresDDLConverter
         return false;
     }
 
-    public String getDropDDL(String command) {
-        String[] parts = command.split(" ");
-        String objectType = parts[1];
-        String objectName = parts[2];
-        return "DROP " + objectType + " " + objectName;
-    }
-
     public List<String> getDDL(TableSpec spec) {
 
-        ArrayList<String> l=new ArrayList<String>();
+        ArrayList<String> l = new ArrayList<String>();
 
-        StringBuffer out=new StringBuffer();
-        StringBuffer end=new StringBuffer();
+        StringBuffer out = new StringBuffer();
+        StringBuffer end = new StringBuffer();
         out.append("CREATE TABLE " + spec.getName() + " (\n");
-        Iterator<ColumnSpec> csi=spec.columnSpecIterator();
-        int csNum=0;
+        Iterator<ColumnSpec> csi = spec.columnSpecIterator();
+        int csNum = 0;
         while (csi.hasNext()) {
-            if (csNum>0) {
+            if (csNum > 0) {
                 out.append(",\n");
             }
             csNum++;
-            ColumnSpec cs=(ColumnSpec) csi.next();
+            ColumnSpec cs = (ColumnSpec) csi.next();
             out.append("  ");
             out.append(cs.getName());
             out.append(' ');
             if (cs.isAutoIncremented()) {
                 out.append(" bigserial");
             } else {
-                if (cs.getType().toLowerCase().indexOf("int(")==0) {
+                if (cs.getType().toLowerCase().indexOf("int(") == 0) {
                     // if precision was specified for int, use postgres's default int precision
                     out.append("int");
-                } else if (cs.getType().toLowerCase().indexOf("smallint(")==0) {
+                } else if (cs.getType().toLowerCase().indexOf("smallint(") == 0) {
                     out.append("smallint");
                 } else {
                     out.append(cs.getType());
@@ -62,11 +55,13 @@ public class PostgresDDLConverter
                     out.append(" NOT NULL");
                 }
 
-                if (cs.getDefaultValue()!=null) {
+                if (cs.getDefaultValue() != null) {
                     out.append(" DEFAULT ");
-                    if (cs.getType().toLowerCase().indexOf("char(") > -1 ||  cs.getType().toLowerCase().indexOf("text") > -1) out.append("'");
+                    if (cs.getType().toLowerCase().indexOf("char(") > -1 || cs.getType().toLowerCase().indexOf("text") > -1)
+                        out.append("'");
                     out.append(cs.getDefaultValue());
-                    if (cs.getType().toLowerCase().indexOf("char(") > -1 ||  cs.getType().toLowerCase().indexOf("text") > -1) out.append("'");
+                    if (cs.getType().toLowerCase().indexOf("char(") > -1 || cs.getType().toLowerCase().indexOf("text") > -1)
+                        out.append("'");
                 }
             }
             if (cs.isUnique()) {
@@ -85,7 +80,7 @@ public class PostgresDDLConverter
                         + " (" + cs.getName() + ")");
             }
 
-            if (cs.getForeignTableName()!=null) {
+            if (cs.getForeignTableName() != null) {
                 if (!end.toString().equals("")) {
                     end.append(",\n");
                 }
@@ -98,13 +93,13 @@ public class PostgresDDLConverter
                 end.append(" (");
                 end.append(cs.getForeignColumnName());
                 end.append(")");
-                if (cs.getOnDeleteAction()!=null) {
+                if (cs.getOnDeleteAction() != null) {
                     end.append(" ON DELETE ");
                     end.append(cs.getOnDeleteAction());
                 }
             }
         }
-        if (spec.getPrimaryColumnName()!=null) {
+        if (spec.getPrimaryColumnName() != null) {
             out.append(",\n  PRIMARY KEY (");
             out.append(spec.getPrimaryColumnName());
             out.append(")");
@@ -118,6 +113,13 @@ public class PostgresDDLConverter
 
         l.add(0, out.toString());
         return l;
+    }
+
+    public String getDropDDL(String command) {
+        String[] parts = command.split(" ");
+        String objectType = parts[1];
+        String objectName = parts[2];
+        return "DROP " + objectType + " " + objectName;
     }
 
 }

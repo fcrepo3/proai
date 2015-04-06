@@ -15,20 +15,20 @@ public class ColumnSpec {
     private String m_onDeleteAction;
 
     public ColumnSpec(String name, String type, boolean binary, String defaultValue,
-            boolean isAutoIncremented, String indexName, boolean isUnique,
-            boolean isNotNull, String foreignTableName, String foreignColumnName,
-            String onDeleteAction) {
-        m_name=name;
-        m_type=type;
-        m_binary=binary;
-        m_defaultValue=defaultValue;
-        m_isAutoIncremented=isAutoIncremented;
-        m_indexName=indexName;
-        m_isUnique=isUnique;
-        m_isNotNull=isNotNull;
-        m_foreignTableName=foreignTableName;
-        m_foreignColumnName=foreignColumnName;
-        m_onDeleteAction=onDeleteAction;
+                      boolean isAutoIncremented, String indexName, boolean isUnique,
+                      boolean isNotNull, String foreignTableName, String foreignColumnName,
+                      String onDeleteAction) {
+        m_name = name;
+        m_type = type;
+        m_binary = binary;
+        m_defaultValue = defaultValue;
+        m_isAutoIncremented = isAutoIncremented;
+        m_indexName = indexName;
+        m_isUnique = isUnique;
+        m_isNotNull = isNotNull;
+        m_foreignTableName = foreignTableName;
+        m_foreignColumnName = foreignColumnName;
+        m_onDeleteAction = onDeleteAction;
     }
 
     public String getName() {

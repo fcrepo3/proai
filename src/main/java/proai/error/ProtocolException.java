@@ -1,8 +1,8 @@
 package proai.error;
 
 public abstract class ProtocolException extends ServerException {
-	static final long serialVersionUID = 1;
-	
+    static final long serialVersionUID = 1;
+
     public ProtocolException(String message) {
         super(message);
     }

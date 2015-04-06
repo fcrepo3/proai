@@ -1,16 +1,19 @@
 package proai.service;
 
-import java.io.*;
-import java.util.*;
+import org.apache.log4j.Logger;
+import proai.CloseableIterator;
+import proai.cache.CachedContentAggregate;
+import proai.error.BadResumptionTokenException;
+import proai.error.ServerException;
 
-import org.apache.log4j.*;
-
-import proai.*;
-import proai.cache.*;
-import proai.error.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.Date;
 
 public class CacheSession<T> extends Thread
-                          implements Session {
+        implements Session {
 
     private static final Logger _LOG =
             Logger.getLogger(CacheSession.class.getName());
@@ -32,9 +35,9 @@ public class CacheSession<T> extends Thread
     private boolean _threadWorking;
 
     public CacheSession(SessionManager manager,
-                   File baseDir,
-                   int secondsBetweenRequests,
-                   ListProvider<T> provider) {
+                        File baseDir,
+                        int secondsBetweenRequests,
+                        ListProvider<T> provider) {
         _manager = manager;
         _baseDir = baseDir;
         _secondsBetweenRequests = secondsBetweenRequests;
@@ -79,8 +82,8 @@ public class CacheSession<T> extends Thread
             while (iter.hasNext() && !_threadNeedsToFinish) {
                 File listFile = new File(sessionDir, _threadWorkingPart + ".txt");
                 out = new PrintWriter(
-                          new OutputStreamWriter(
-                              new FileOutputStream(listFile)));
+                        new OutputStreamWriter(
+                                new FileOutputStream(listFile)));
                 for (int i = 0; i < incompleteListSize && iter.hasNext(); i++) {
                     String[] pathAndDate = (String[]) iter.next();
                     out.print(pathAndDate[0]);            // path
@@ -112,8 +115,14 @@ public class CacheSession<T> extends Thread
         } catch (Throwable th) {
             _exception = new ServerException("Unexpected error in session thread", th);
         } finally {
-            if (iter != null) try { iter.close(); } catch (Exception e) { }
-            if (out != null) try { out.close(); } catch (Exception e) { }
+            if (iter != null) try {
+                iter.close();
+            } catch (Exception e) {
+            }
+            if (out != null) try {
+                out.close();
+            } catch (Exception e) {
+            }
             _threadWorking = false;
             _LOG.info(_sessionKey + " retrieval thread finished");
         }
@@ -123,7 +132,7 @@ public class CacheSession<T> extends Thread
 
     /**
      * Has the session expired?
-     *
+     * <p/>
      * If this is true, the session will be cleaned by the reaper thread
      * of the session manager.
      */
@@ -141,24 +150,27 @@ public class CacheSession<T> extends Thread
 
     /**
      * Do all possible cleanup for this session.
-     *
+     * <p/>
      * This includes signaling to its thread to stop asap,
      * waiting for it to stop, and removing any files/directories that remain.
-     *
+     * <p/>
      * The implementation should be fail-safe, as a session may be asked to
      * clean itself more than once.
-     *
+     * <p/>
      * Clean must *not* be called from this session's thread.
      */
     public void clean() {
         _threadNeedsToFinish = true;
         while (_threadWorking) {
-            try { Thread.sleep(250); } catch (Exception e) { }
+            try {
+                Thread.sleep(250);
+            } catch (Exception e) {
+            }
         }
         File sessionDir = new File(_baseDir, _sessionKey);
         if (sessionDir.exists()) {
             File[] files = sessionDir.listFiles();
-            _LOG.debug("Deleting session " + _sessionKey + " directory and all " 
+            _LOG.debug("Deleting session " + _sessionKey + " directory and all "
                     + files.length + " files within");
             for (int i = 0; i < files.length; i++) {
                 files[i].delete();
@@ -171,14 +183,14 @@ public class CacheSession<T> extends Thread
      * Get the named response, wait for it, or throw any exception that
      * has popped up while generating parts.
      */
-    public ResponseData getResponseData(int partNum) throws ServerException, 
-                                                            BadResumptionTokenException {
+    public ResponseData getResponseData(int partNum) throws ServerException,
+            BadResumptionTokenException {
         if (_exception != null) {
             throw _exception;
         }
 
-        _LOG.debug("Entered getResponseData(" + partNum  + ")");
-        
+        _LOG.debug("Entered getResponseData(" + partNum + ")");
+
         // the current request should either be for the last sent part or plus one
         int nextPart = _lastSentPart + 1;
         if (partNum == _lastSentPart || partNum == nextPart) {
@@ -188,7 +200,10 @@ public class CacheSession<T> extends Thread
 
             // Then, try to return the response
             while (_threadWorking && _lastGeneratedPart < partNum) {
-                try { Thread.sleep(100); } catch (Exception e) { }
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                }
             }
             if (_exception != null) {
                 throw _exception;
@@ -203,10 +218,10 @@ public class CacheSession<T> extends Thread
                 if (sessionDir.exists()) {
                     String[] names = sessionDir.list();
                     if (names.length == 0) {
-                    message.append(".  In fact, the session directory "
-                            + "is empty!  Has it expired unexpectedly?");
+                        message.append(".  In fact, the session directory "
+                                + "is empty!  Has it expired unexpectedly?");
                     } else {
-                        message.append(".  Only the following " + names.length 
+                        message.append(".  Only the following " + names.length
                                 + " files currently exist in the session"
                                 + " directory: ");
                         for (int i = 0; i < names.length; i++) {
@@ -225,10 +240,10 @@ public class CacheSession<T> extends Thread
             }
             String token = getResumptionToken(partNum + 1);
             ResponseData response = new ResponseDataImpl(
-                                        new CachedContentAggregate(listFile,
-                                                                   _provider.getVerb(),
-                                                                   _provider.getRecordCache()), 
-                                        token);
+                    new CachedContentAggregate(listFile,
+                            _provider.getVerb(),
+                            _provider.getRecordCache()),
+                    token);
 
             // Since we're going to succeed, make sure we clean up the previous part, if any
             if (partNum > 0) {
@@ -239,7 +254,7 @@ public class CacheSession<T> extends Thread
             }
 
             _lastSentPart = partNum;
-            _expirationTime = new Date().getTime() + ( 1000 * _secondsBetweenRequests );
+            _expirationTime = new Date().getTime() + (1000 * _secondsBetweenRequests);
             _LOG.info(_sessionKey + " returning part " + partNum);
             return response;
         } else {

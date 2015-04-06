@@ -1,16 +1,20 @@
 package proai.service;
 
-import java.io.*;
-import java.util.*;
+import org.apache.log4j.Logger;
+import proai.CloseableIterator;
+import proai.Writable;
+import proai.cache.CachedContent;
+import proai.error.BadResumptionTokenException;
+import proai.error.ServerException;
 
-import org.apache.log4j.*;
-
-import proai.*;
-import proai.cache.*;
-import proai.error.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.Date;
 
 public class SnapshotSession<T> extends Thread
-                             implements Session {
+        implements Session {
 
     private static final Logger logger =
             Logger.getLogger(SnapshotSession.class.getName());
@@ -32,9 +36,9 @@ public class SnapshotSession<T> extends Thread
     private boolean m_threadWorking;
 
     public SnapshotSession(SessionManager manager,
-                   File baseDir,
-                   int secondsBetweenRequests,
-                   ListProvider<T> provider) {
+                           File baseDir,
+                           int secondsBetweenRequests,
+                           ListProvider<T> provider) {
         m_manager = manager;
         m_baseDir = baseDir;
         m_secondsBetweenRequests = secondsBetweenRequests;
@@ -76,8 +80,8 @@ public class SnapshotSession<T> extends Thread
             while (iter.hasNext() && !m_threadNeedsToFinish) {
                 File partFile = new File(sessionDir, m_threadWorkingPart + ".xml");
                 out = new PrintWriter(
-                          new OutputStreamWriter(
-                              new FileOutputStream(partFile), "UTF-8"));
+                        new OutputStreamWriter(
+                                new FileOutputStream(partFile), "UTF-8"));
                 out.println("<" + m_provider.getVerb() + ">");
                 for (int i = 0; i < incompleteListSize && iter.hasNext(); i++) {
                     Writable writable = (Writable) iter.next();
@@ -104,8 +108,14 @@ public class SnapshotSession<T> extends Thread
         } catch (Throwable th) {
             m_exception = new ServerException("Unexpected error in session thread", th);
         } finally {
-            if (iter != null) try { iter.close(); } catch (Exception e) { }
-            if (out != null) try { out.close(); } catch (Exception e) { }
+            if (iter != null) try {
+                iter.close();
+            } catch (Exception e) {
+            }
+            if (out != null) try {
+                out.close();
+            } catch (Exception e) {
+            }
             m_threadWorking = false;
             logger.info(m_sessionKey + " retrieval thread finished");
         }
@@ -115,7 +125,7 @@ public class SnapshotSession<T> extends Thread
 
     /**
      * Has the session expired?
-     *
+     * <p/>
      * If this is true, the session will be cleaned by the reaper thread
      * of the session manager.
      */
@@ -129,19 +139,22 @@ public class SnapshotSession<T> extends Thread
 
     /**
      * Do all possible cleanup for this session.
-     *
+     * <p/>
      * This includes signaling to its thread to stop asap,
      * waiting for it to stop, and removing any files/directories that remain.
-     *
+     * <p/>
      * The implementation should be fail-safe, as a session may be asked to
      * clean itself more than once.
-     *
+     * <p/>
      * Clean must *not* be called from this session's thread.
      */
     public void clean() {
         m_threadNeedsToFinish = true;
         while (m_threadWorking) {
-            try { Thread.sleep(250); } catch (Exception e) { }
+            try {
+                Thread.sleep(250);
+            } catch (Exception e) {
+            }
         }
         File sessionDir = new File(m_baseDir, m_sessionKey);
         File[] files = sessionDir.listFiles();
@@ -169,11 +182,14 @@ public class SnapshotSession<T> extends Thread
 
             // Then, try to return the response
             while (m_threadWorking && m_lastGeneratedPart < partNum) {
-                try { Thread.sleep(100); } catch (Exception e) { }
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                }
             }
-        if (m_exception != null) {
-            throw m_exception;
-        }
+            if (m_exception != null) {
+                throw m_exception;
+            }
             File partFile = new File(m_baseDir, m_sessionKey + "/" + partNum + ".xml");
             if (!partFile.exists()) {
                 throw new BadResumptionTokenException("the indicated part does not exist");
@@ -188,7 +204,7 @@ public class SnapshotSession<T> extends Thread
             }
 
             m_lastSentPart = partNum;
-            m_expirationTime = new Date().getTime() + ( 1000 * m_secondsBetweenRequests );
+            m_expirationTime = new Date().getTime() + (1000 * m_secondsBetweenRequests);
             logger.info(m_sessionKey + " returning part " + partNum);
             return response;
         } else {

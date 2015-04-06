@@ -1,8 +1,8 @@
 package proai.error;
 
 public class CannotDisseminateFormatException extends ProtocolException {
-	static final long serialVersionUID = 1;
-	
+    static final long serialVersionUID = 1;
+
     public CannotDisseminateFormatException() {
         super("The metadata format identified by the value given for the metadataPrefix argument is not supported by the item or by the repository.");
     }
@@ -12,10 +12,12 @@ public class CannotDisseminateFormatException extends ProtocolException {
     }
 
     public CannotDisseminateFormatException(String message,
-                             Throwable cause) {
+                                            Throwable cause) {
         super(message, cause);
     }
 
-    public String getCode() { return "cannotDisseminateFormat"; }
+    public String getCode() {
+        return "cannotDisseminateFormat";
+    }
 
 }

@@ -1,13 +1,16 @@
 package proai.cache;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
-
 import org.apache.log4j.Logger;
-
 import proai.Writable;
 import proai.error.ServerException;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * The file-based portion of the record cache.
@@ -30,30 +33,6 @@ public class RCDisk {
     }
 
     /**
-     * Get a new, unique path (relative to m_baseDir) for a file, based on 
-     * the current time.
-     *
-     * If the directory for the path does not yet exist, it will be created.
-     */
-    private String getNewPath() {
-        DateFormat formatter = new SimpleDateFormat(PATH_DATE_PATTERN);
-        String path = null;
-        synchronized (this) {
-            long now = System.currentTimeMillis();
-            while (now == _lastPathDate) {
-                logger.debug("Path date collision... waiting for a unique date");
-                try { Thread.sleep(10); } catch (Exception e) { } // make sure we have a unique date
-                now = System.currentTimeMillis();
-            }
-            path = formatter.format(new Date(now));
-            _lastPathDate = now;
-        }
-        File dir = new File(m_baseDir, path.substring(0, 16));
-        dir.mkdirs();
-        return path;
-    }
-
-    /**
      * Get a new RCDiskWriter backed by a new file in the disk cache.
      */
     public RCDiskWriter getNewWriter() throws ServerException {
@@ -66,17 +45,44 @@ public class RCDisk {
     }
 
     /**
-     * Write the content of the given <code>Writable</code> to a new file and 
+     * Get a new, unique path (relative to m_baseDir) for a file, based on
+     * the current time.
+     * <p/>
+     * If the directory for the path does not yet exist, it will be created.
+     */
+    private String getNewPath() {
+        DateFormat formatter = new SimpleDateFormat(PATH_DATE_PATTERN);
+        String path = null;
+        synchronized (this) {
+            long now = System.currentTimeMillis();
+            while (now == _lastPathDate) {
+                logger.debug("Path date collision... waiting for a unique date");
+                try {
+                    Thread.sleep(10);
+                } catch (Exception e) {
+                } // make sure we have a unique date
+                now = System.currentTimeMillis();
+            }
+            path = formatter.format(new Date(now));
+            _lastPathDate = now;
+        }
+        File dir = new File(m_baseDir, path.substring(0, 16));
+        dir.mkdirs();
+        return path;
+    }
+
+    /**
+     * Write the content of the given <code>Writable</code> to a new file and
      * return the path of the file, relative to the disk cache base directory.
      */
     public String write(Writable writable) throws ServerException {
         String path = getNewPath();
         try {
             PrintWriter writer = new PrintWriter(
-                                     new OutputStreamWriter(
-                                         new FileOutputStream(
-                                             new File(m_baseDir, path)), 
-                                             "UTF-8"));
+                    new OutputStreamWriter(
+                            new FileOutputStream(
+                                    new File(m_baseDir, path)),
+                            "UTF-8"));
             writable.write(writer);
             writer.close();
             return path;
@@ -85,13 +91,13 @@ public class RCDisk {
         }
     }
 
-    public File getFile(String path) {
-        return new File(m_baseDir, path);
-    }
-
     public CachedContent getContent(String path) {
         if (path == null) return null;
         return new CachedContent(getFile(path));
+    }
+
+    public File getFile(String path) {
+        return new File(m_baseDir, path);
     }
 
     // Same as getContent, but re-writes the <datestamp> and optionally only returns the header
@@ -215,8 +221,17 @@ public class RCDisk {
     }
 
     /**
-     * This should be pretty fast.  It relies on a specific number of 
-     * directories and the fact that File.delete() won't delete a directory 
+     * Delete the given directory if it's empty.
+     */
+    private void deleteIfEmpty(File dir) {
+        if (dir.delete()) {
+            logger.info("Pruned directory " + dir.getPath());
+        }
+    }
+
+    /**
+     * This should be pretty fast.  It relies on a specific number of
+     * directories and the fact that File.delete() won't delete a directory
      * if it is non-empty.
      */
     public void pruneEmptyDirs() {
@@ -252,15 +267,6 @@ public class RCDisk {
         }
     }
 
-    /**
-     * Delete the given directory if it's empty.
-     */
-    private void deleteIfEmpty(File dir) {
-        if (dir.delete()) {
-            logger.info("Pruned directory " + dir.getPath());
-        }
-    }
-
     public void writeAllPaths(PrintWriter writer) {
         File[] yearDirs = m_baseDir.listFiles();
         if (yearDirs != null) {
@@ -280,11 +286,11 @@ public class RCDisk {
                                                 String[] files = minuteDirs[minuteIndex].list();
                                                 for (int i = 0; i < files.length; i++) {
                                                     String path = yearDirs[yearIndex].getName()
-                                                           + "/" + monthDirs[monthIndex].getName()
-                                                           + "/" + dayDirs[dayIndex].getName()
-                                                           + "/" + hourDirs[hourIndex].getName()
-                                                           + "/" + minuteDirs[minuteIndex].getName()
-                                                           + "/" + files[i];
+                                                            + "/" + monthDirs[monthIndex].getName()
+                                                            + "/" + dayDirs[dayIndex].getName()
+                                                            + "/" + hourDirs[hourIndex].getName()
+                                                            + "/" + minuteDirs[minuteIndex].getName()
+                                                            + "/" + files[i];
                                                     writer.println(path);
                                                 }
                                             }

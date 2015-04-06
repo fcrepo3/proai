@@ -1,8 +1,8 @@
 package proai.error;
 
 public class RepositoryException extends ServerException {
-	static final long serialVersionUID = 1;
-	
+    static final long serialVersionUID = 1;
+
     public RepositoryException(String message) {
         super(message);
     }

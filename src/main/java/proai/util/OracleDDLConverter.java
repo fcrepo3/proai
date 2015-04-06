@@ -1,6 +1,6 @@
 package proai.util;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,44 +14,37 @@ public class OracleDDLConverter
         return true;
     }
 
-    public String getDropDDL(String command) {
-        String[] parts = command.split(" ");
-        String objectType = parts[1];
-        String objectName = parts[2];
-        return "DROP " + objectType + " " + objectName;
-    }
-
     public List<String> getDDL(TableSpec spec) {
-        ArrayList<String> l=new ArrayList<String>();
-        StringBuffer out=new StringBuffer();
-        StringBuffer end=new StringBuffer();
+        ArrayList<String> l = new ArrayList<String>();
+        StringBuffer out = new StringBuffer();
+        StringBuffer end = new StringBuffer();
         out.append("CREATE TABLE " + spec.getName() + " (\n");
-        Iterator<ColumnSpec> csi=spec.columnSpecIterator();
-        int csNum=0;
+        Iterator<ColumnSpec> csi = spec.columnSpecIterator();
+        int csNum = 0;
         while (csi.hasNext()) {
-            if (csNum>0) {
+            if (csNum > 0) {
                 out.append(",\n");
             }
             csNum++;
-            ColumnSpec cs=(ColumnSpec) csi.next();
+            ColumnSpec cs = (ColumnSpec) csi.next();
             out.append("  ");
             out.append(cs.getName());
             out.append(' ');
-            if (cs.getType().toLowerCase().indexOf("int(")==0) {
-              // if precision was specified for int, use oracle's default int precision
-              out.append("int");
-            }  else {
-              if (cs.getType().toLowerCase().indexOf("smallint(")==0) {
-                out.append("smallint");
-              } else {
-                if (cs.getType().toLowerCase().equals("bigint")) {
-                    out.append("NUMBER(20,0)");
-                } else if (cs.getType().toLowerCase().equals("text")) {
-                    out.append("CLOB");
+            if (cs.getType().toLowerCase().indexOf("int(") == 0) {
+                // if precision was specified for int, use oracle's default int precision
+                out.append("int");
+            } else {
+                if (cs.getType().toLowerCase().indexOf("smallint(") == 0) {
+                    out.append("smallint");
                 } else {
-                out.append(cs.getType());
+                    if (cs.getType().toLowerCase().equals("bigint")) {
+                        out.append("NUMBER(20,0)");
+                    } else if (cs.getType().toLowerCase().equals("text")) {
+                        out.append("CLOB");
+                    } else {
+                        out.append(cs.getType());
+                    }
                 }
-              }
             }
             if (cs.isAutoIncremented()) {
                 // oracle doesn't support auto-increment in a CREATE TABLE
@@ -59,7 +52,7 @@ public class OracleDDLConverter
                 // creating a sequence, then creating a trigger that
                 // inserts the sequence's next value for that column
                 // upon insert.
-                StringBuffer createSeq=new StringBuffer();
+                StringBuffer createSeq = new StringBuffer();
                 createSeq.append("CREATE SEQUENCE ");
                 createSeq.append(spec.getName());
                 createSeq.append("_S");
@@ -69,7 +62,7 @@ public class OracleDDLConverter
                 createSeq.append("  INCREMENT BY 1\n");
                 createSeq.append("  NOMAXVALUE");
                 l.add(createSeq.toString());
-                StringBuffer createTrig=new StringBuffer();
+                StringBuffer createTrig = new StringBuffer();
                 createTrig.append("CREATE TRIGGER ");
                 createTrig.append(spec.getName());
                 createTrig.append("_T");
@@ -89,7 +82,7 @@ public class OracleDDLConverter
                 createTrig.append("\n  END;");
                 l.add(createTrig.toString());
             }
-            if (cs.getDefaultValue()!=null) {
+            if (cs.getDefaultValue() != null) {
                 out.append(" DEFAULT '");
                 out.append(cs.getDefaultValue());
                 out.append("'");
@@ -106,7 +99,7 @@ public class OracleDDLConverter
                 end.append(cs.getName());
                 end.append(")");
             }
-            if (cs.getForeignTableName()!=null) {
+            if (cs.getForeignTableName() != null) {
                 if (!end.toString().equals("")) {
                     end.append(",\n");
                 }
@@ -119,13 +112,13 @@ public class OracleDDLConverter
                 end.append(" (");
                 end.append(cs.getForeignColumnName());
                 end.append(")");
-                if (cs.getOnDeleteAction()!=null) {
+                if (cs.getOnDeleteAction() != null) {
                     end.append(" ON DELETE ");
                     end.append(cs.getOnDeleteAction());
                 }
             }
         }
-        if (spec.getPrimaryColumnName()!=null) {
+        if (spec.getPrimaryColumnName() != null) {
             out.append(",\n  PRIMARY KEY (");
             out.append(spec.getPrimaryColumnName());
             out.append(")");
@@ -138,6 +131,13 @@ public class OracleDDLConverter
         out.append(")");
         l.add(0, out.toString());
         return l;
+    }
+
+    public String getDropDDL(String command) {
+        String[] parts = command.split(" ");
+        String objectType = parts[1];
+        String objectName = parts[2];
+        return "DROP " + objectType + " " + objectName;
     }
 
 }

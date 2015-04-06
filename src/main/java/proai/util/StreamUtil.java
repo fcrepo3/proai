@@ -1,8 +1,11 @@
 package proai.util;
 
 import java.io.*;
-import java.util.*;
-import java.text.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Static methods for working with streams (and strings).
@@ -19,8 +22,8 @@ public abstract class StreamUtil {
         try {
             byte[] buf = new byte[STREAM_BUFFER_SIZE];
             int len;
-            while ( ( len = inStream.read( buf ) ) > 0 ) {
-                outStream.write( buf, 0, len );
+            while ((len = inStream.read(buf)) > 0) {
+                outStream.write(buf, 0, len);
             }
         } finally {
             inStream.close();
@@ -35,7 +38,7 @@ public abstract class StreamUtil {
                                    String encoding) throws IOException {
         try {
             BufferedReader reader = new BufferedReader(
-                                        new InputStreamReader(in, encoding));
+                    new InputStreamReader(in, encoding));
             StringBuffer out = new StringBuffer();
             String line = reader.readLine();
             while (line != null) {
@@ -69,10 +72,6 @@ public abstract class StreamUtil {
         return out.toString();
     }
 
-    public static Date nowUTC() {
-        return convertLocalDateToUTCDate(new Date());
-    }
-
     public static String nowUTCString() {
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -80,6 +79,10 @@ public abstract class StreamUtil {
         } catch (Exception e) { // won't happen
             return null;
         }
+    }
+
+    public static Date nowUTC() {
+        return convertLocalDateToUTCDate(new Date());
     }
 
     public static Date convertLocalDateToUTCDate(Date localDate) {

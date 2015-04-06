@@ -10,9 +10,9 @@ public class CachedMetadataFormat implements MetadataFormat {
     private String m_schemaLocation;
 
     public CachedMetadataFormat(int key,
-                              String prefix,
-                              String namespaceURI,
-                              String schemaLocation) {
+                                String prefix,
+                                String namespaceURI,
+                                String schemaLocation) {
         m_key = key;
         m_prefix = prefix;
         m_namespaceURI = namespaceURI;

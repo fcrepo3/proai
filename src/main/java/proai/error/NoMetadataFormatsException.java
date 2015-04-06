@@ -1,8 +1,8 @@
 package proai.error;
 
 public class NoMetadataFormatsException extends ProtocolException {
-	static final long serialVersionUID = 1;
-	
+    static final long serialVersionUID = 1;
+
     public NoMetadataFormatsException() {
         super("There are no metadata formats available for the specified item.");
     }
@@ -12,10 +12,12 @@ public class NoMetadataFormatsException extends ProtocolException {
     }
 
     public NoMetadataFormatsException(String message,
-                             Throwable cause) {
+                                      Throwable cause) {
         super(message, cause);
     }
 
-    public String getCode() { return "noMetadataFormats"; }
+    public String getCode() {
+        return "noMetadataFormats";
+    }
 
 }

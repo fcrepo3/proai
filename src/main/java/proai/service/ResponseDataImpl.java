@@ -1,9 +1,9 @@
 package proai.service;
 
-import java.io.*;
+import proai.Writable;
+import proai.error.ServerException;
 
-import proai.*;
-import proai.error.*;
+import java.io.PrintWriter;
 
 public class ResponseDataImpl implements ResponseData {
 

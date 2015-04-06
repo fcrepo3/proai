@@ -1,8 +1,8 @@
 package proai;
 
-import java.io.PrintWriter;
-
 import proai.error.ServerException;
+
+import java.io.PrintWriter;
 
 public interface Writable {
 

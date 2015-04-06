@@ -1,8 +1,8 @@
 package proai.driver.impl;
 
-import java.io.File;
-
 import proai.Record;
+
+import java.io.File;
 
 public class RecordImpl implements Record {
 
