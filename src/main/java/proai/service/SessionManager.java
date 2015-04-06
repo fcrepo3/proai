@@ -121,8 +121,8 @@ public class SessionManager extends Thread {
                 }
                 logger.info("Cleaning up " + toCleanKeys.size() + " sessions (" + dueTo);
                 for (int i = 0; i < toCleanKeys.size(); i++) {
-                    ((Session) toCleanSessions.get(i)).clean();
-                    m_sessions.remove((String) toCleanKeys.get(i));
+                    toCleanSessions.get(i).clean();
+                    m_sessions.remove(toCleanKeys.get(i));
                 }
             }
         }
@@ -159,7 +159,7 @@ public class SessionManager extends Thread {
      * The first part is sessionid/0, the second part is sessionid/1, and so on.
      */
     public ResponseData getResponseData(String resumptionToken)
-            throws BadResumptionTokenException,
+            throws
             ServerException {
         String[] s = resumptionToken.split("/");
         if (s.length != 2) {
@@ -173,7 +173,7 @@ public class SessionManager extends Thread {
         }
         Session session;
         synchronized (m_sessions) {
-            session = (Session) m_sessions.get(s[0]);
+            session = m_sessions.get(s[0]);
         }
         if (session == null) {
             throw new BadResumptionTokenException(ERR_RESUMPTION_SESSION);

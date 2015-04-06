@@ -25,7 +25,7 @@ public class MySQLDDLConverter
                 out.append(",\n");
             }
             csNum++;
-            ColumnSpec cs = (ColumnSpec) csi.next();
+            ColumnSpec cs = csi.next();
             out.append("  ");
             out.append(cs.getName());
             out.append(' ');

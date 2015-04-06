@@ -92,7 +92,7 @@ public class RCDatabase {
                 logger.info("Creating " + tableName + " table");
                 List<String> commands = ddlc.getDDL(spec);
                 for (int i = 0; i < commands.size(); i++) {
-                    command = (String) commands.get(i);
+                    command = commands.get(i);
                     executeUpdate(stmt, command);
                     createdCommands.add(command);
                 }
@@ -107,7 +107,7 @@ public class RCDatabase {
                 try {
                     dstmt = getStatement(conn, false);
                     for (int i = 0; i < createdCommands.size(); i++) {
-                        String createdCommand = (String) createdCommands.get(i);
+                        String createdCommand = createdCommands.get(i);
                         dropCmd = ddlc.getDropDDL(createdCommand);
                         executeUpdate(stmt, dropCmd);
                     }
@@ -437,7 +437,7 @@ public class RCDatabase {
         Map<String, Integer> map = new HashMap<String, Integer>();
         Iterator<CachedMetadataFormat> iter = getFormats(conn).iterator();
         while (iter.hasNext()) {
-            CachedMetadataFormat format = (CachedMetadataFormat) iter.next();
+            CachedMetadataFormat format = iter.next();
             map.put(format.getPrefix(), new Integer(format.getKey()));
         }
         return map;
@@ -704,7 +704,7 @@ public class RCDatabase {
             //           add it to rcMembership
             //
             int itemKey = getItemKey(conn, rec.getItemID());
-            Integer fKey = (Integer) formatKeyMap.get(rec.getPrefix());
+            Integer fKey = formatKeyMap.get(rec.getPrefix());
             if (fKey == null) {
                 throw new ServerException("Error in parsed record; no such format in cache: " + rec.getPrefix());
             }

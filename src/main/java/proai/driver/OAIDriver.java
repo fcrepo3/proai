@@ -27,7 +27,7 @@ public interface OAIDriver extends Writable {
      * @throws RepositoryException if required properties are missing/bad,
      *                             or initialization failed for any reason.
      */
-    public void init(Properties props) throws RepositoryException;
+    void init(Properties props) throws RepositoryException;
 
     /**
      * Write information about the repository to the given PrintWriter.
@@ -41,7 +41,7 @@ public interface OAIDriver extends Writable {
      *
      * @throws RepositoryException if there is a problem reading from the repository.
      */
-    public void write(PrintWriter out) throws RepositoryException;
+    void write(PrintWriter out) throws RepositoryException;
 
     /**
      * Get the latest date that something changed in the remote repository.
@@ -52,7 +52,7 @@ public interface OAIDriver extends Writable {
      * and it will be used as the "until" date for the next record query.
      * </p>
      */
-    public Date getLatestDate() throws RepositoryException;
+    Date getLatestDate() throws RepositoryException;
 
     /**
      * Get an iterator over a list of MetadataFormat objects representing
@@ -60,7 +60,7 @@ public interface OAIDriver extends Writable {
      *
      * @see proai.MetadataFormat
      */
-    public RemoteIterator<? extends MetadataFormat> listMetadataFormats() throws RepositoryException;
+    RemoteIterator<? extends MetadataFormat> listMetadataFormats() throws RepositoryException;
 
     /**
      * Get an iterator over a list of SetInfo objects representing all
@@ -75,7 +75,7 @@ public interface OAIDriver extends Writable {
      *
      * @see proai.SetInfo
      */
-    public RemoteIterator<? extends SetInfo> listSetInfo() throws RepositoryException;
+    RemoteIterator<? extends SetInfo> listSetInfo() throws RepositoryException;
 
     /**
      * Get an iterator of <code>Record</code> objects representing all records
@@ -88,9 +88,9 @@ public interface OAIDriver extends Writable {
      *
      * @see proai.Record
      */
-    public RemoteIterator<? extends Record> listRecords(Date from,
-                                                        Date until,
-                                                        String mdPrefix) throws RepositoryException;
+    RemoteIterator<? extends Record> listRecords(Date from,
+                                                 Date until,
+                                                 String mdPrefix) throws RepositoryException;
 
     /**
      * Write the XML of the record whose source info is given.
@@ -106,14 +106,14 @@ public interface OAIDriver extends Writable {
      * <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html#GetRecord">section
      * 4.1 of the OAI-PMH 2.0 specification</a>.
      */
-    public void writeRecordXML(String itemID,
-                               String mdPrefix,
-                               String sourceInfo,
-                               PrintWriter writer) throws RepositoryException;
+    void writeRecordXML(String itemID,
+                        String mdPrefix,
+                        String sourceInfo,
+                        PrintWriter writer) throws RepositoryException;
 
     /**
      * Release any resources held by the driver.
      */
-    public void close() throws RepositoryException;
+    void close() throws RepositoryException;
 
 }

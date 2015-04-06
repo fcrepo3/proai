@@ -89,10 +89,7 @@ public class TableSpecDeserializer
         if (v == null) {
             return false;
         }
-        if ((v.equalsIgnoreCase("true")) || (v.equalsIgnoreCase("yes"))) {
-            return true;
-        }
-        return false;
+        return (v.equalsIgnoreCase("true")) || (v.equalsIgnoreCase("yes"));
     }
 
     public void endElement(String uri, String localName, String qName) throws SAXException {

@@ -482,7 +482,7 @@ public class Updater extends Thread {
             while (riter.hasNext()) {
 
                 checkImmediateShutdown();
-                MetadataFormat format = (MetadataFormat) riter.next();
+                MetadataFormat format = riter.next();
                 _db.putFormat(conn, format);
                 newPrefixes.add(format.getPrefix());
             }
@@ -529,7 +529,7 @@ public class Updater extends Thread {
             while (riter.hasNext()) {
 
                 checkImmediateShutdown();
-                SetInfo setInfo = (SetInfo) riter.next();
+                SetInfo setInfo = riter.next();
                 String encounteredSetSpec = setInfo.getSetSpec();
 
                 /*
@@ -578,7 +578,7 @@ public class Updater extends Thread {
         Iterator<SetInfo> iter = _db.getSetInfo(conn).iterator();
         while (iter.hasNext()) {
 
-            String oldSpec = ((SetInfo) iter.next()).getSetSpec();
+            String oldSpec = iter.next().getSetSpec();
             if (!newSpecs.contains(oldSpec)) {
 
                 checkImmediateShutdown();
@@ -595,7 +595,6 @@ public class Updater extends Thread {
 
         long queueStartTime = System.currentTimeMillis();
         int totalQueuedCount = 0;
-        ;
         for (String mdPrefix : allPrefixes) {
 
             long lastPollDate = _db.getLastPollDate(conn, mdPrefix);

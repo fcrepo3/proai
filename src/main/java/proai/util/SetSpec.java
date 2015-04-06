@@ -10,10 +10,7 @@ public abstract class SetSpec {
 
     public static boolean hasParents(String spec) {
 
-        if (spec != null && spec.contains(":"))
-            return true;
-        else
-            return false;
+        return spec != null && spec.contains(":");
     }
 
     public static String parentOf(String spec) {

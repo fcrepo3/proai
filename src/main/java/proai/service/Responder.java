@@ -120,8 +120,8 @@ public class Responder {
      * @throws ServerException                  if a low-level (non-protocol) error occurred.
      */
     public ResponseData getRecord(String identifier, String metadataPrefix)
-            throws BadArgumentException, CannotDisseminateFormatException,
-            IdDoesNotExistException, ServerException {
+            throws
+            ServerException {
 
         if (logger.isDebugEnabled()) {
             logger.debug("Entered getRecord(" + q(identifier) + ", "
@@ -187,7 +187,7 @@ public class Responder {
      * not exist in the cache.
      */
     private void checkItemExists(String identifier)
-            throws IdDoesNotExistException, ServerException {
+            throws ServerException {
         if (!m_cache.itemExists(identifier)) {
             throw new IdDoesNotExistException(ERR_ITEM_DOESNT_EXIST);
         }
@@ -240,9 +240,8 @@ public class Responder {
      */
     public ResponseData listIdentifiers(String from, String until,
                                         String metadataPrefix, String set, String resumptionToken)
-            throws BadArgumentException, BadResumptionTokenException,
-            CannotDisseminateFormatException, NoRecordsMatchException,
-            NoSetHierarchyException, ServerException {
+            throws
+            ServerException {
         System.out.println("From " + from + " Until " + until);
 
         if (logger.isDebugEnabled()) {
@@ -266,9 +265,8 @@ public class Responder {
     private ResponseData listRecords(String from, String until,
                                      String metadataPrefix, String set, String resumptionToken,
                                      boolean identifiersOnly, int incompleteListSize)
-            throws BadArgumentException, BadResumptionTokenException,
-            CannotDisseminateFormatException, NoRecordsMatchException,
-            NoSetHierarchyException, ServerException {
+            throws
+            ServerException {
         if (resumptionToken == null) {
             Date fromDate = null;
             Date untilDate = null;
@@ -311,7 +309,7 @@ public class Responder {
      * @throws ServerException         if a low-level (non-protocol) error occurred.
      */
     public ResponseData listMetadataFormats(String identifier)
-            throws IdDoesNotExistException, NoMetadataFormatsException,
+            throws
             ServerException {
 
         if (logger.isDebugEnabled()) {
@@ -366,9 +364,8 @@ public class Responder {
      */
     public ResponseData listRecords(String from, String until,
                                     String metadataPrefix, String set, String resumptionToken)
-            throws BadArgumentException, BadResumptionTokenException,
-            CannotDisseminateFormatException, NoRecordsMatchException,
-            NoSetHierarchyException, ServerException {
+            throws
+            ServerException {
 
         if (logger.isDebugEnabled()) {
             logger.debug("Entered listRecords(" + q(from) + ", " + q(until)
@@ -399,7 +396,7 @@ public class Responder {
      * @throws ServerException             if a low-level (non-protocol) error occurred.
      */
     public ResponseData listSets(String resumptionToken)
-            throws BadResumptionTokenException, NoSetHierarchyException,
+            throws
             ServerException {
 
         if (logger.isDebugEnabled()) {

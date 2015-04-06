@@ -115,7 +115,7 @@ public class RecordCache extends Thread {
             Enumeration<?> e = connProps.propertyNames();
             while (e.hasMoreElements()) {
                 String name = (String) e.nextElement();
-                pool.addConnectionProperty(name, (String) connProps.getProperty(name));
+                pool.addConnectionProperty(name, connProps.getProperty(name));
             }
         } catch (Exception e) {
             throw new ServerException("Unable to initialize DataSource", e);

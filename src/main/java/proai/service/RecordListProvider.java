@@ -39,9 +39,6 @@ public class RecordListProvider implements ListProvider<CachedContent> {
     }
 
     public CloseableIterator<CachedContent> getList() throws
-            CannotDisseminateFormatException,
-            NoRecordsMatchException,
-            NoSetHierarchyException,
             ServerException {
         CloseableIterator<CachedContent> iter = m_cache.getRecordsContent(m_from,
                 m_until,
@@ -68,9 +65,6 @@ public class RecordListProvider implements ListProvider<CachedContent> {
     }
 
     public CloseableIterator<String[]> getPathList() throws
-            CannotDisseminateFormatException,
-            NoRecordsMatchException,
-            NoSetHierarchyException,
             ServerException {
         CloseableIterator<String[]> iter = m_cache.getRecordsPaths(m_from,
                 m_until,

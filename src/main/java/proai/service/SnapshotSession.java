@@ -168,7 +168,7 @@ public class SnapshotSession<T> extends Thread
      * Get the named response, wait for it, or throw any exception that
      * has popped up while generating parts.
      */
-    public ResponseData getResponseData(int partNum) throws ServerException, BadResumptionTokenException {
+    public ResponseData getResponseData(int partNum) throws ServerException {
         if (m_exception != null) {
             throw m_exception;
         }

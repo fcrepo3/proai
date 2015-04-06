@@ -11,11 +11,11 @@ import java.util.List;
  */
 public interface DDLConverter {
 
-    public boolean supportsTableType();
+    boolean supportsTableType();
 
-    public List<String> getDDL(TableSpec tableSpec);
+    List<String> getDDL(TableSpec tableSpec);
 
-    public String getDropDDL(String command);
+    String getDropDDL(String command);
 
 }
 

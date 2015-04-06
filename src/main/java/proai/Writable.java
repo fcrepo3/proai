@@ -6,6 +6,6 @@ import java.io.PrintWriter;
 
 public interface Writable {
 
-    public void write(PrintWriter out) throws ServerException;
+    void write(PrintWriter out) throws ServerException;
 
 }

@@ -6,15 +6,15 @@ import proai.error.ServerException;
 
 public interface ListProvider<T> {
 
-    public CloseableIterator<T> getList() throws ServerException;
+    CloseableIterator<T> getList() throws ServerException;
 
     // abbreviated form of above -- gets String[]s of ("cachePath" [, "dateString"])
-    public CloseableIterator<String[]> getPathList() throws ServerException;
+    CloseableIterator<String[]> getPathList() throws ServerException;
 
-    public RecordCache getRecordCache();
+    RecordCache getRecordCache();
 
-    public int getIncompleteListSize();
+    int getIncompleteListSize();
 
-    public String getVerb();
+    String getVerb();
 
 }

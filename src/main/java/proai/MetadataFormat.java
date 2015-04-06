@@ -2,10 +2,10 @@ package proai;
 
 public interface MetadataFormat {
 
-    public String getPrefix();
+    String getPrefix();
 
-    public String getNamespaceURI();
+    String getNamespaceURI();
 
-    public String getSchemaLocation();
+    String getSchemaLocation();
 
 }

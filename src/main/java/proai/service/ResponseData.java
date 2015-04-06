@@ -15,12 +15,12 @@ public interface ResponseData extends Writable {
      * Get the resumption token for the next part if this is one
      * in a series of incomplete list responses (and not the last part).
      */
-    public String getResumptionToken();
+    String getResumptionToken();
 
     /**
      * Release any resources (such as files or locks on other resources)
      * associated with the response data.
      */
-    public void release() throws ServerException;
+    void release() throws ServerException;
 
 }

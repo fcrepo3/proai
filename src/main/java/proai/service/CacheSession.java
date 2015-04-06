@@ -85,7 +85,7 @@ public class CacheSession<T> extends Thread
                         new OutputStreamWriter(
                                 new FileOutputStream(listFile)));
                 for (int i = 0; i < incompleteListSize && iter.hasNext(); i++) {
-                    String[] pathAndDate = (String[]) iter.next();
+                    String[] pathAndDate = iter.next();
                     out.print(pathAndDate[0]);            // path
                     if (pathAndDate.length > 1) {
                         out.print(" " + pathAndDate[1]);  // possibly date
@@ -183,8 +183,7 @@ public class CacheSession<T> extends Thread
      * Get the named response, wait for it, or throw any exception that
      * has popped up while generating parts.
      */
-    public ResponseData getResponseData(int partNum) throws ServerException,
-            BadResumptionTokenException {
+    public ResponseData getResponseData(int partNum) throws ServerException {
         if (_exception != null) {
             throw _exception;
         }
