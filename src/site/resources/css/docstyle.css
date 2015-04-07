@@ -2,7 +2,7 @@
  * Stylesheet for documentation.
  */
 
-body { 
+body {
     background-color: #ffffff;
     margin: 20px;
     font-family: Arial, Helvetica, sans-serif;
@@ -25,7 +25,7 @@ body {
     background-image: url(images/logo_44x60.gif);
     background-repeat: no-repeat;
     background-position: top left;
-    
+
     float: left;
     height: 60px;
     width: 44px;
@@ -33,7 +33,7 @@ body {
 }
 
 #title {
-    text-align: center; 
+    text-align: center;
 }
 
 #toc {
@@ -55,7 +55,7 @@ body {
     list-style: upper-alpha outside none;
 }
 
-#tocbox ol ol ol{
+#tocbox ol ol ol {
     list-style: decimal outside none;
 }
 
@@ -110,10 +110,10 @@ h2, h3 {
 }
 
 h4, h5 {
-  color: darkblue;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  text-decoration: underline;
+    color: darkblue;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    text-decoration: underline;
 }
 
 h1 {
@@ -162,27 +162,25 @@ p {
     text-decoration: none;
 }
 
-
-
 #relnotes ol {
-	margin-left: 20px;
-	padding-left: 0px;
+    margin-left: 20px;
+    padding-left: 0px;
 }
 
 #relnotes ol li {
-	margin-top: 10px;
-	color: #4C7C8E;
-	font-size: 18pt;
+    margin-top: 10px;
+    color: #4C7C8E;
+    font-size: 18pt;
 }
 
 #relnotes ol li p {
-	color: #000000;
-	font-size: 12pt;
+    color: #000000;
+    font-size: 12pt;
 }
 
 #relnotes ol li ul li {
-	margin-top: 2px;
-	color: #000000;
-	font-size: 12pt;
+    margin-top: 2px;
+    color: #000000;
+    font-size: 12pt;
 }
 

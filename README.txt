@@ -16,7 +16,8 @@ Proai is distributed under the Apache 2 license.
 Use of this software indicates your acceptance of the terms of this license.
 The distribution includes several third-party, open-source libraries with 
 thier own license terms.  Specific terms of the Apache 2 and all third-party
-licenses can be found in the src/doc/license/ directory.
+licenses can be found in the src/site/license/ directory and on the Maven
+project site.
 
 
 DOCUMENTATION
@@ -24,17 +25,10 @@ DOCUMENTATION
 Online documentation for the latest version of Proai can be found at 
 http://proai.sf.net/
 
-Offline documentation for this version of Proai can be found in the 
-dist/doc/ directory after doing a documentation build. (see below)
-
-
 BUILDING
 ========
-To compile Proai, make sure you have Ant installed, and type:
-  ant dist
+To compile Proai, make sure you have Maven installed, and type:
+  mvn package
 
-To build the documentation, type:
-  ant doc
-
-For other useful build targets, type:
-  ant -p
+To build the project site, type:
+  mvn site
