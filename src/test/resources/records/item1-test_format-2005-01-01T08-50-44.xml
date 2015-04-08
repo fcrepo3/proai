@@ -1,0 +1,14 @@
+<record>
+  <header>
+    <identifier>oai:example.org:item1</identifier>
+    <datestamp>2005-01-01T08:50:44Z</datestamp>
+  </header>
+  <metadata>
+    <test_format:doc xmlns:test_format="http://example.org/test_format/" 
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                     xsi:schemaLocation="http://example.org/test_format/
+                                         http://example.org/test_format.xsd">
+      <test_format:resource>urn:example:resource1</test_format:resource>
+    </test_format:doc>
+  </metadata>
+</record>

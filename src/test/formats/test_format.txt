@@ -1,2 +1,0 @@
-http://example.org/testFormat/
-http://example.org/testFormat.xsd
