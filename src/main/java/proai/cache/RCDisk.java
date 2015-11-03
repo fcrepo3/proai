@@ -17,13 +17,12 @@ import java.util.Date;
  */
 public class RCDisk {
 
-    public static final String PATH_DATE_PATTERN = "yyyy/MM/dd/HH/mm/ss.SSS.'xml'";
+	public static final String PATH_DATE_PATTERN = "yyyy/MM/dd/HH/mm/ss.SSS.'UUID'.'xml'";
 
     private static final Logger logger =
             Logger.getLogger(RCDisk.class.getName());
 
     private File m_baseDir;
-    private long _lastPathDate;
 
     public RCDisk(File baseDir) {
         m_baseDir = baseDir;
@@ -50,26 +49,14 @@ public class RCDisk {
      * <p/>
      * If the directory for the path does not yet exist, it will be created.
      */
-    private String getNewPath() {
-        DateFormat formatter = new SimpleDateFormat(PATH_DATE_PATTERN);
-        String path = null;
-        synchronized (this) {
-            long now = System.currentTimeMillis();
-            while (now == _lastPathDate) {
-                logger.debug("Path date collision... waiting for a unique date");
-                try {
-                    Thread.sleep(10);
-                } catch (Exception e) {
-                } // make sure we have a unique date
-                now = System.currentTimeMillis();
-            }
-            path = formatter.format(new Date(now));
-            _lastPathDate = now;
-        }
-        File dir = new File(m_baseDir, path.substring(0, 16));
-        dir.mkdirs();
-        return path;
-    }
+	private String getNewPath() {
+		DateFormat formatter = new SimpleDateFormat(PATH_DATE_PATTERN);
+		long now = System.currentTimeMillis();
+		String path = formatter.format(new Date(now)).replaceAll("UUID", UUID.randomUUID().toString());
+		File dir = new File(m_baseDir, path.substring(0, 16));
+		dir.mkdirs();
+		return path;
+	}
 
     /**
      * Write the content of the given <code>Writable</code> to a new file and
