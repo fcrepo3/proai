@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * The file-based portion of the record cache.
