@@ -353,15 +353,16 @@ public class RecordCache extends Thread {
     }
 
     private static void addToCatalog(SchemaCatalog catalog, String url, String path) throws Exception {
-
         if (!catalog.contains(url)) {
-            InputStream in = null;
-            try {
-                in = RecordCache.class.getClassLoader().getResourceAsStream(path);
-            } catch (Throwable th) {
-                in = ClassLoader.getSystemResourceAsStream(path);
+            InputStream in;
+            if (
+                    (in = RecordCache.class.getClassLoader().getResourceAsStream(path)) != null ||
+                    (in = ClassLoader.getSystemResourceAsStream(path)) != null) {
+                catalog.put(url, in);
+            } else {
+                logger.error(
+                        String.format("Cannot obtain schema for '%s' from '%s'. Nothing added to catalog.", url, path));
             }
-            catalog.put(url, in);
         }
     }
 
